@@ -1,6 +1,22 @@
 import { extendTheme } from "native-base";
 
 export const Theme = extendTheme({
+	components: {
+		Input: {
+			baseStyle: {
+				backgroundColor: "white",
+				rounded: "lg",
+				_focus: {
+					borderColor: "blue.light",
+				},
+			},
+		},
+		Button: {
+			baseStyle: {
+				backgroundColor: "gray.500",
+			},
+		},
+	},
 	colors: {
 		blue: {
 			normal: "#364D9D",

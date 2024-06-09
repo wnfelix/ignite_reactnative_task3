@@ -1,11 +1,13 @@
-import { Button, Heading, Input, Text, useTheme } from "native-base";
-import { AntDesign } from "@expo/vector-icons";
+import { Heading, Text } from "native-base";
+import { useNavigation } from "@react-navigation/native";
 
 import FavIcon from "@assets/Favicon.svg";
-import { Footer, Main } from "./styles";
 import { Container } from "@styles/global";
-import { useNavigation } from "@react-navigation/native";
 import { AuthNatigatorRoutesProps } from "@routes/auth.routes";
+import { InputPassword } from "@components/InputPassword";
+import { Input } from "@components/Input";
+import { Footer, Main, SignInButton, SignUpButton } from "./styles";
+import { userApi } from "@api/userApi";
 
 export function SignIn() {
 	const navigator = useNavigation<AuthNatigatorRoutesProps>();
@@ -24,44 +26,17 @@ export function SignIn() {
 				</Text>
 
 				<Text fontSize="xs">Acesse sua conta</Text>
-				<Input placeholder="E-mail" bgColor="white" rounded="lg" />
-				<Input
-					placeholder="Senha"
-					type="password"
-					bgColor="white"
-					rounded="lg"
-					InputRightElement={
-						<Button pr={2} bg="white">
-							<AntDesign name="eyeo" size={24} color="black" />
-						</Button>
-					}
-				/>
-				<Button
-					w="full"
-					mt={4}
-					bgColor="blue.light"
-					_pressed={{
-						bgColor: "gray.400",
-					}}
-				>
-					Entrar
-				</Button>
+				<Input placeholder="E-mail" />
+				<InputPassword placeholder="Senha" />
+				<SignInButton>Entrar</SignInButton>
 			</Main>
 			<Footer>
 				<Text>Ainda não tem acesso?</Text>
-				<Button
-					w="full"
-					mt={4}
-					bgColor="gray.500"
-					onPress={handleSignUp}
-					_pressed={{
-						bgColor: "gray.400",
-					}}
-				>
+				<SignUpButton onPress={handleSignUp}>
 					<Text color="black" bold>
 						Criar uma conta
 					</Text>
-				</Button>
+				</SignUpButton>
 			</Footer>
 		</Container>
 	);

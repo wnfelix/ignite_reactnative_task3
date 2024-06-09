@@ -1,5 +1,6 @@
 import styled from "styled-components/native";
 import { HStack, IconButton, VStack } from "native-base";
+import { Button } from "@components/Button";
 
 export const Container = styled(VStack).attrs(() => ({
 	flex: 1,
@@ -25,6 +26,18 @@ export const AvatarEditButton = styled(IconButton).attrs(() => ({
 	bgColor: "blue.light",
 	h: 9,
 	w: 9,
+	_pressed: {
+		bgColor: "gray.400",
+	},
+}))``;
+
+export const CreateButton = styled(Button).attrs(() => ({
+	bgColor: "black",
+	w: "full",
+}))``;
+
+export const BackButton = styled(Button).attrs(() => ({
+	w: "full",
 }))``;
 
 export const Footer = styled(VStack).attrs(() => ({
