@@ -1,25 +1,19 @@
-import {
-	JSXElementConstructor,
-	ReactNode,
-	cloneElement,
-	useState,
-} from "react";
+import { cloneElement, useContext, useState } from "react";
 import axios from "axios";
-import { Image, ScrollView, Text, useToast } from "native-base";
+import { ScrollView, Text, useToast } from "native-base";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome6 } from "@expo/vector-icons";
 import { AuthNatigatorRoutesProps } from "@routes/auth.routes";
 import { userApi } from "@api/userApi";
 import { IInputProps, Input } from "@components/Input";
 import { InputPassword } from "@components/InputPassword";
 import { AppError } from "@utils/AppError";
+import { AuthContext } from "@contexts/AuthContext";
+import { IPhotoFile, IUser } from "src/interfaces";
 
-import Avatar from "@assets/Avatar.png";
 import {
-	AvatarEditButton,
 	BackButton,
 	Container,
 	CreateButton,
@@ -28,11 +22,9 @@ import {
 	SectionAvatar,
 } from "./styles";
 import { Header } from "./components/Header";
+import { AvatarPhoto } from "./components/AvatarPhoto";
 
-interface IFormDataProps {
-	name: string;
-	email: string;
-	phone: string;
+interface IFormDataProps extends Pick<IUser, "name" | "email" | "tel"> {
 	password: string;
 	confirmPassword: string;
 }
@@ -40,7 +32,7 @@ interface IFormDataProps {
 const signUpSchema = yup.object({
 	name: yup.string().required("Informe o nome"),
 	email: yup.string().required("Informe o email").email("Email inválido"),
-	phone: yup
+	tel: yup
 		.string()
 		.required("É obrigatório informar o telefone")
 		.min(11, "Informe o telefone com DDD"),
@@ -56,9 +48,10 @@ const signUpSchema = yup.object({
 });
 
 export function SignUp() {
+	const { signIn } = useContext(AuthContext);
 	const navigator = useNavigation<AuthNatigatorRoutesProps>();
 	const toast = useToast();
-	const [avatar, setAvatar] = useState<string>();
+	const [avatar, setAvatar] = useState<IPhotoFile>({} as IPhotoFile);
 	const [isLoading, setIsLoading] = useState(false);
 	const { createUser } = userApi();
 
@@ -77,9 +70,14 @@ export function SignUp() {
 	async function handleSignUp(data: IFormDataProps) {
 		try {
 			setIsLoading(true);
-			console.log({ ...data, avatar });
-			await createUser({ ...data, avatar });
-			//await signIn(email, password);
+			await createUser(data, avatar);
+
+			toast.show({
+				title: "Cadastrado com sucesso",
+				placement: "top",
+				bgColor: "green.500",
+			});
+			await signIn(data.email, data.password);
 		} catch (error) {
 			console.log(error);
 			setIsLoading(false);
@@ -96,10 +94,19 @@ export function SignUp() {
 
 			if (axios.isAxiosError(error)) {
 				console.log("axios error", error.response?.data.message);
+				console.log("axios error", error.response);
 			}
 		}
 	}
 
+	/**
+	 * Generate HookForm Controller
+	 * @param fieldName internal name field
+	 * @param placeHolder label display on field
+	 * @param FieldControl input control
+	 * @param errorMessage message error if exists
+	 * @returns HookForm Controller
+	 */
 	function formField(
 		fieldName: keyof IFormDataProps,
 		placeHolder: string,
@@ -132,77 +139,25 @@ export function SignUp() {
 				<Header />
 				<Main>
 					<SectionAvatar>
-						<Image source={Avatar} alt="avatar" />
-						<AvatarEditButton
-							icon={<FontAwesome6 name="pencil" size={10} color="white" />}
-						/>
+						<AvatarPhoto onChange={setAvatar} />
 					</SectionAvatar>
-					<Controller
-						control={control}
-						name="name"
-						render={({ field: { onChange, value } }) => (
-							<Input
-								placeholder="Nome"
-								onChangeText={onChange}
-								value={value}
-								errorMessage={errors.name?.message}
-								bgColor="white"
-							/>
-						)}
-					/>
-					<Controller
-						control={control}
-						name="email"
-						render={({ field: { onChange, value } }) => (
-							<Input
-								placeholder="E-mail"
-								onChangeText={onChange}
-								value={value}
-								errorMessage={errors.email?.message}
-								bgColor="white"
-							/>
-						)}
-					/>
-					<Controller
-						control={control}
-						name="phone"
-						render={({ field: { onChange, value } }) => (
-							<Input
-								placeholder="Telefone"
-								onChangeText={onChange}
-								value={value}
-								errorMessage={errors.phone?.message}
-								bgColor="white"
-							/>
-						)}
-					/>
-					<Controller
-						control={control}
-						name="password"
-						render={({ field: { onChange, value } }) => (
-							<InputPassword
-								placeholder="Senha"
-								onChangeText={onChange}
-								value={value}
-								errorMessage={errors.password?.message}
-								bgColor="white"
-							/>
-						)}
-					/>
-					<Controller
-						control={control}
-						name="confirmPassword"
-						render={({ field: { onChange, value } }) => (
-							<InputPassword
-								placeholder="Confirmar Senha"
-								onChangeText={onChange}
-								value={value}
-								errorMessage={errors.confirmPassword?.message}
-								bgColor="white"
-							/>
-						)}
-					/>
+					{formField("name", "Nome", <Input />, errors.name?.message)}
+					{formField("email", "E-mail", <Input />, errors.email?.message)}
+					{formField("tel", "Telefone", <Input />, errors.tel?.message)}
+					{formField(
+						"password",
+						"Senha",
+						<InputPassword />,
+						errors.password?.message
+					)}
+					{formField(
+						"confirmPassword",
+						"Confirmar Senha",
+						<InputPassword />,
+						errors.confirmPassword?.message
+					)}
 					<CreateButton
+						isLoading={isLoading}
 						_pressed={{
 							bgColor: "gray.400",
 						}}

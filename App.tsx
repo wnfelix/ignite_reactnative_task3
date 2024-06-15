@@ -2,6 +2,7 @@ import { StatusBar } from "react-native";
 import { NativeBaseProvider } from "native-base";
 import { Routes } from "@routes/index";
 import { Theme } from "src/theme";
+import { AuthContextProvider } from "@contexts/AuthContext";
 
 export default function App() {
 	return (
@@ -11,7 +12,9 @@ export default function App() {
 				backgroundColor="transparent"
 				translucent
 			/>
-			<Routes />
+			<AuthContextProvider>
+				<Routes />
+			</AuthContextProvider>
 		</NativeBaseProvider>
 	);
 }
