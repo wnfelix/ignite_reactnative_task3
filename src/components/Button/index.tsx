@@ -10,7 +10,7 @@ export function Button(props: IButtonProps) {
 		<NativeBaseButton
 			bgColor="gray.500"
 			_pressed={{
-				bgColor: "gray.400",
+				backgroundColor: "gray.400",
 			}}
 			{...props}
 		></NativeBaseButton>

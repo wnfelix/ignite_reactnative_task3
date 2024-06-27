@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
-import { VStack } from "native-base";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export const Container = styled(VStack).attrs(() => ({
-	flex: 1,
-}))``;
+export const Container = styled(SafeAreaView)`
+	flex: 1;
+`;

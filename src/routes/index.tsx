@@ -7,10 +7,6 @@ import { Loading } from "@components/Loading";
 
 export function Routes() {
 	const { user, isLoadingUserStorageData } = useAuth();
-	// const { user, isLoadingUserStorageData } = {
-	// 	user: { id: null },
-	// 	isLoadingUserStorageData: false,
-	// };
 	const { colors } = useTheme();
 
 	const theme = DefaultTheme;

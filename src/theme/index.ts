@@ -36,16 +36,16 @@ export const Theme = extendTheme({
 		},
 		white: "#FFFFFF",
 	},
-	// fonts: {
-	// 	heading: "Roboto_700Bold",
-	// 	body: "Roboto_400Regular",
-	// },
+	fonts: {
+		heading: "Karla_700Bold",
+		body: "Karla_400Regular",
+	},
 	fontSizes: {
 		xs: 12,
 		sm: 14,
 		md: 16,
-		lg: 18,
-		xl: 32,
+		lg: 20,
+		xl: 24,
 	},
 	// sizes: {
 	// 	14: 56,
