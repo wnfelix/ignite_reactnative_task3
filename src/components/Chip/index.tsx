@@ -1,7 +1,7 @@
-import React from "react";
-import { Box, Text, useTheme } from "native-base";
-import { ResponsiveValue } from "native-base/lib/typescript/components/types";
-import { IColors } from "native-base/lib/typescript/theme/base/colors";
+import React from 'react';
+import { Box, Text, useTheme } from 'native-base';
+import { ResponsiveValue } from 'native-base/lib/typescript/components/types';
+import { IColors } from 'native-base/lib/typescript/theme/base/colors';
 
 interface IChipProps {
 	title: string;
@@ -9,7 +9,7 @@ interface IChipProps {
 	color?: ResponsiveValue<IColors | (string & {})>;
 }
 
-export function Chip({ title, bg = "gray.200", color = "white" }: IChipProps) {
+export function Chip({ title, bg = 'gray.200', color = 'white' }: IChipProps) {
 	return (
 		<Box
 			h={6}

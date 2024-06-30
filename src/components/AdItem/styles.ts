@@ -32,5 +32,5 @@ interface IAdItemChipProps {
 	used: boolean;
 }
 export const AdItemChip = styled(Chip).attrs<IAdItemChipProps>(({ used }) => ({
-	bg: used ? 'gray.200' : 'blue.normal',
+	bg: used ? 'gray.200' : 'primary.600',
 }))``;
