@@ -1,9 +1,9 @@
-import { Box, useTheme } from "native-base";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
-import { AuthRoutes } from "./auth.routes";
-import { useAuth } from "@hooks/useAuth";
-import { AppRoutes } from "./app.routes";
-import { Loading } from "@components/Loading";
+import { Box, useTheme } from 'native-base';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { AuthRoutes } from './auth.routes';
+import { useAuth } from '@hooks/useAuth';
+import { AppRoutes } from './app.routes';
+import { Loading } from '@components/Loading';
 
 export function Routes() {
 	const { user, isLoadingUserStorageData } = useAuth();

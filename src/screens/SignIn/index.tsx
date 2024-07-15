@@ -1,19 +1,19 @@
-import { Heading, Text } from "native-base";
-import { useNavigation } from "@react-navigation/native";
+import { Heading, Text } from 'native-base';
+import { useNavigation } from '@react-navigation/native';
 
-import FavIcon from "@assets/Favicon.svg";
-import { Container } from "@styles/global";
-import { AuthNatigatorRoutesProps } from "@routes/auth.routes";
-import { InputPassword } from "@components/InputPassword";
-import { Input } from "@components/Input";
-import { Footer, Main, SignInButton, SignUpButton } from "./styles";
-import { userApi } from "@api/userApi";
+import FavIcon from '@assets/Favicon.svg';
+import { Container } from '@styles/global';
+import { AuthNatigatorRoutesProps } from '@routes/auth.routes';
+import { InputPassword } from '@components/InputPassword';
+import { Input } from '@components/Input';
+import { Footer, Main, SignInButton, SignUpButton } from './styles';
+import userService from '@services/userService';
 
 export function SignIn() {
 	const navigator = useNavigation<AuthNatigatorRoutesProps>();
 
 	function handleSignUp() {
-		navigator.navigate("signUp");
+		navigator.navigate('signUp');
 	}
 
 	return (

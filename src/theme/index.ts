@@ -50,8 +50,10 @@ export const Theme = extendTheme({
 		lg: 20,
 		xl: 24,
 	},
-	// sizes: {
-	// 	14: 56,
-	// 	33: 148,
-	// },
+	sizes: {
+		xs: 6,
+		sm: 4,
+		md: 24,
+		lg: 32,
+	},
 });

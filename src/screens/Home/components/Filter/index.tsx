@@ -5,7 +5,6 @@ import BottomSheet, {
 	BottomSheetView,
 	BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
-import { Button } from '@components/Button';
 import { Chip } from './components/Chip';
 import { ApplyButton, ClearButton, TextButton } from './styles';
 

@@ -1,16 +1,17 @@
 import { Platform } from 'react-native';
+import { Icon, useTheme } from 'native-base';
 import {
 	createBottomTabNavigator,
 	BottomTabNavigationProp,
 } from '@react-navigation/bottom-tabs';
-import { Home } from '@screens/Home';
+import { AntDesign, Feather, Ionicons } from '@expo/vector-icons';
 
-import { AntDesign, Feather } from '@expo/vector-icons';
-import { Icon, useTheme } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
+import { Home } from '@screens/Home';
+import { NewAd } from '@screens/NewAd';
 
 type AppRoutes = {
 	home: undefined;
+	newAd: undefined;
 };
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>;
@@ -67,6 +68,14 @@ export function AppRoutes() {
 							color={color}
 						/>
 					),
+				}}
+			/>
+			<Screen
+				name="newAd"
+				component={NewAd}
+				options={{
+					tabBarButton: () => null,
+					tabBarStyle: { display: 'none' },
 				}}
 			/>
 		</Navigator>

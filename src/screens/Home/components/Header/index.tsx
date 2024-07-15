@@ -1,23 +1,23 @@
 import React from 'react';
 import { VStack, Text, Heading, HStack } from 'native-base';
-import { api } from '@services/api';
 import { useAuth } from '@hooks/useAuth';
-import { AvatarImage, Container, AddButton, AddIcon } from './styles';
+import { Container, AddButton, AddIcon } from './styles';
+import { useNavigation } from '@react-navigation/native';
+import { AppNavigatorRoutesProps } from '@routes/app.routes';
+import { Avatar } from '@components/Avatar';
 
 export function Header() {
 	const { user } = useAuth();
+	const navigation = useNavigation<AppNavigatorRoutesProps>();
 
 	return (
 		<Container>
-			<AvatarImage
-				source={{ uri: `${api.defaults.baseURL}images/${user.avatar}` }}
-				alt="avatar"
-			/>
+			<Avatar avatar={user.avatar} size={12} />
 			<VStack>
 				<Text fontSize={16}>Boas vindas,</Text>
 				<Heading fontSize={16}>{user.name.split(' ')[0]}!</Heading>
 			</VStack>
-			<AddButton>
+			<AddButton onPress={() => navigation.navigate('newAd')}>
 				<HStack space={2} alignItems="center">
 					<AddIcon name="plus" />
 					<Text bold fontSize={12} color="white" letterSpacing={1}>

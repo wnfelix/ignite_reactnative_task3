@@ -1,18 +1,10 @@
 import { Button } from '@components/Button';
-import { HStack, Image } from 'native-base';
+import { HStack } from 'native-base';
 import styled from 'styled-components/native';
 import { AntDesign } from '@expo/vector-icons';
 
 export const Container = styled(HStack).attrs(() => ({
 	space: 2,
-}))``;
-
-export const AvatarImage = styled(Image).attrs(() => ({
-	w: 50,
-	h: 50,
-	rounded: 'full',
-	borderWidth: 2,
-	borderColor: 'blue.normal',
 }))``;
 
 export const AddButton = styled(Button).attrs(() => ({

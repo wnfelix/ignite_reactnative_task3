@@ -1,17 +1,17 @@
-import { createContext, useEffect, useState } from "react";
-import { IUser } from "src/interfaces";
-import { api } from "@services/api";
+import { createContext, useEffect, useState } from 'react';
+import { IUser } from 'src/interfaces';
+import { api } from '@services/api';
 import {
 	storageAuthTokenGet,
 	storageAuthTokenRemove,
 	storageAuthTokenSave,
-} from "@storage/storageAuthToken";
+} from '@storage/storageAuthToken';
 import {
 	storageUserGet,
 	storageUserSave,
 	storageUserRemove,
-} from "@storage/storageUser";
-import { userApi } from "@api/userApi";
+} from '@storage/storageUser';
+import userService from '@services/userService';
 
 export type AuthContextDataProps = {
 	user: IUser;
@@ -24,7 +24,7 @@ export type AuthContextDataProps = {
 const AuthContext = createContext<AuthContextDataProps>(
 	{} as AuthContextDataProps
 );
-AuthContext.displayName = "Contexto com autenticação";
+AuthContext.displayName = 'Contexto com autenticação';
 
 type AuthContextProviderProps = {
 	children: React.ReactNode;
@@ -33,7 +33,6 @@ type AuthContextProviderProps = {
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
 	const [user, setUser] = useState({} as IUser);
 	const [isLoadingUserStorageData, setIsLoadingUserStorage] = useState(true);
-	const { login } = userApi();
 
 	useEffect(() => {
 		loadUserData();
@@ -46,7 +45,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 	}, [signOut]);
 
 	async function userAndTokenUpdate(userData: IUser, token: string) {
-		api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+		api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 		setUser(userData);
 	}
 
@@ -60,7 +59,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 	}
 
 	async function signIn(email: string, password: string) {
-		const { data } = await login(email, password);
+		const { data } = await userService.login(email, password);
 		try {
 			if (data.user && data.token && data.refresh_token) {
 				setIsLoadingUserStorage(true);

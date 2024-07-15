@@ -1,17 +1,17 @@
-import { cloneElement, useContext, useState } from "react";
-import axios from "axios";
-import { ScrollView, Text, useToast } from "native-base";
-import { useForm, Controller } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigation } from "@react-navigation/native";
-import { AuthNatigatorRoutesProps } from "@routes/auth.routes";
-import { userApi } from "@api/userApi";
-import { IInputProps, Input } from "@components/Input";
-import { InputPassword } from "@components/InputPassword";
-import { AppError } from "@utils/AppError";
-import { AuthContext } from "@contexts/AuthContext";
-import { IPhotoFile, IUser } from "src/interfaces";
+import { cloneElement, useContext, useState } from 'react';
+import axios from 'axios';
+import { ScrollView, Text, useToast } from 'native-base';
+import { useForm, Controller } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigation } from '@react-navigation/native';
+import { AuthNatigatorRoutesProps } from '@routes/auth.routes';
+import userService from '@services/userService';
+import { IInputProps, Input } from '@components/Input';
+import { InputPassword } from '@components/InputPassword';
+import { AppError } from '@utils/AppError';
+import { AuthContext } from '@contexts/AuthContext';
+import { IPhotoFile, IUser } from 'src/interfaces';
 
 import {
 	BackButton,
@@ -20,31 +20,31 @@ import {
 	Footer,
 	Main,
 	SectionAvatar,
-} from "./styles";
-import { Header } from "./components/Header";
-import { AvatarPhoto } from "./components/AvatarPhoto";
+} from './styles';
+import { Header } from './components/Header';
+import { AvatarPhoto } from './components/AvatarPhoto';
 
-interface IFormDataProps extends Pick<IUser, "name" | "email" | "tel"> {
+interface IFormDataProps extends Pick<IUser, 'name' | 'email' | 'tel'> {
 	password: string;
 	confirmPassword: string;
 }
 
 const signUpSchema = yup.object({
-	name: yup.string().required("Informe o nome"),
-	email: yup.string().required("Informe o email").email("Email inválido"),
+	name: yup.string().required('Informe o nome'),
+	email: yup.string().required('Informe o email').email('Email inválido'),
 	tel: yup
 		.string()
-		.required("É obrigatório informar o telefone")
-		.min(11, "Informe o telefone com DDD"),
+		.required('É obrigatório informar o telefone')
+		.min(11, 'Informe o telefone com DDD'),
 	password: yup
 		.string()
-		.required("Informe a senha")
-		.min(6, "A senha deve ter pelo menos 6 dígitos"),
+		.required('Informe a senha')
+		.min(6, 'A senha deve ter pelo menos 6 dígitos'),
 	confirmPassword: yup
 		.string()
-		.required("Confirme a senha")
-		.min(6, "A senha deve ter pelo menos 6 dígitos")
-		.oneOf([yup.ref("password")], "A senha é diferente"),
+		.required('Confirme a senha')
+		.min(6, 'A senha deve ter pelo menos 6 dígitos')
+		.oneOf([yup.ref('password')], 'A senha é diferente'),
 });
 
 export function SignUp() {
@@ -53,7 +53,6 @@ export function SignUp() {
 	const toast = useToast();
 	const [avatar, setAvatar] = useState<IPhotoFile>({} as IPhotoFile);
 	const [isLoading, setIsLoading] = useState(false);
-	const { createUser } = userApi();
 
 	const {
 		control,
@@ -70,12 +69,12 @@ export function SignUp() {
 	async function handleSignUp(data: IFormDataProps) {
 		try {
 			setIsLoading(true);
-			await createUser(data, avatar);
+			await userService.create(data, avatar);
 
 			toast.show({
-				title: "Cadastrado com sucesso",
-				placement: "top",
-				bgColor: "green.500",
+				title: 'Cadastrado com sucesso',
+				placement: 'top',
+				bgColor: 'green.500',
 			});
 			await signIn(data.email, data.password);
 		} catch (error) {
@@ -84,17 +83,17 @@ export function SignUp() {
 			const isAppError = error instanceof AppError;
 			const title = isAppError
 				? error.message
-				: "Não foi possível criar a conta tente novamente mais tarde";
+				: 'Não foi possível criar a conta tente novamente mais tarde';
 
 			toast.show({
 				title: title,
-				placement: "top",
-				bgColor: "red.500",
+				placement: 'top',
+				bgColor: 'red.500',
 			});
 
 			if (axios.isAxiosError(error)) {
-				console.log("axios error", error.response?.data.message);
-				console.log("axios error", error.response);
+				console.log('axios error', error.response?.data.message);
+				console.log('axios error', error.response);
 			}
 		}
 	}
@@ -123,7 +122,7 @@ export function SignUp() {
 						onChangeText: onChange,
 						value: value,
 						errorMessage: errorMessage,
-						bgColor: "white",
+						bgColor: 'white',
 					})
 				}
 			/>
@@ -141,25 +140,25 @@ export function SignUp() {
 					<SectionAvatar>
 						<AvatarPhoto onChange={setAvatar} />
 					</SectionAvatar>
-					{formField("name", "Nome", <Input />, errors.name?.message)}
-					{formField("email", "E-mail", <Input />, errors.email?.message)}
-					{formField("tel", "Telefone", <Input />, errors.tel?.message)}
+					{formField('name', 'Nome', <Input />, errors.name?.message)}
+					{formField('email', 'E-mail', <Input />, errors.email?.message)}
+					{formField('tel', 'Telefone', <Input />, errors.tel?.message)}
 					{formField(
-						"password",
-						"Senha",
+						'password',
+						'Senha',
 						<InputPassword />,
 						errors.password?.message
 					)}
 					{formField(
-						"confirmPassword",
-						"Confirmar Senha",
+						'confirmPassword',
+						'Confirmar Senha',
 						<InputPassword />,
 						errors.confirmPassword?.message
 					)}
 					<CreateButton
 						isLoading={isLoading}
 						_pressed={{
-							bgColor: "gray.400",
+							bgColor: 'gray.400',
 						}}
 						onPress={handleSubmit(handleSignUp)}
 					>
@@ -170,7 +169,7 @@ export function SignUp() {
 					<Text>Já tem uma conta?</Text>
 					<BackButton
 						_pressed={{
-							bgColor: "gray.400",
+							bgColor: 'gray.400',
 						}}
 						onPress={handleSignIn}
 					>
