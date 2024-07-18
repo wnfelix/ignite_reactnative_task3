@@ -1,15 +1,10 @@
-import React from "react";
-import {
-	Container,
-	AdItemImage,
-	Header,
-	AvatarImage,
-	AdItemChip,
-} from "./styles";
-import { Text } from "native-base";
-import { formatCurrency } from "@utils/numberUtils";
-import { api } from "@services/api";
-import { useAuth } from "@hooks/useAuth";
+import React from 'react';
+import { Container, AdItemImage, Header, AvatarImage } from './styles';
+import { Text } from 'native-base';
+import { formatCurrency } from '@utils/numberUtils';
+import { api } from '@services/api';
+import { useAuth } from '@hooks/useAuth';
+import { AdItemChip } from '@components/AdItemChip';
 
 interface IAdItemProps {
 	title: string;
@@ -31,7 +26,7 @@ export function AdItem({ title, price, used }: IAdItemProps) {
 					source={{ uri: `${api.defaults.baseURL}images/${user.avatar}` }}
 					alt="avatar"
 				/>
-				<AdItemChip title={used ? "USADO" : "NOVO"} used={used} />
+				<AdItemChip used={used} />
 			</Header>
 			<Text>{title}</Text>
 			<Text bold>{formatCurrency(price)}</Text>

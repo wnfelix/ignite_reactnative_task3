@@ -4,27 +4,42 @@ import {
 	createBottomTabNavigator,
 	BottomTabNavigationProp,
 } from '@react-navigation/bottom-tabs';
+import {
+	createStackNavigator,
+	StackNavigationProp,
+} from '@react-navigation/stack';
 import { AntDesign, Feather, Ionicons } from '@expo/vector-icons';
 
+import { IProduct } from 'src/interfaces';
 import { Home } from '@screens/Home';
 import { NewAd } from '@screens/NewAd';
+import { PreviewAd } from '@screens/PreviewAd';
 
-type AppRoutes = {
+type TabAppRoutes = {
 	home: undefined;
-	newAd: undefined;
+	myAds: undefined;
+	signOut: undefined;
 };
 
-export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>;
+type StackAppRoutes = {
+	main: undefined;
+	newAd: undefined;
+	previewAd: Omit<IProduct, 'id' | 'product_images' | 'user'>;
+};
 
-const { Navigator, Screen } = createBottomTabNavigator();
+export type AppNavigatorRoutesProps = BottomTabNavigationProp<TabAppRoutes>;
+export type AppStackNavigatorRoutesProps = StackNavigationProp<StackAppRoutes>;
 
-export function AppRoutes() {
+const Tab = createBottomTabNavigator<TabAppRoutes>();
+const Stack = createStackNavigator<StackAppRoutes>();
+
+function TabRoutes() {
 	const { sizes, colors } = useTheme();
 
 	const iconSize = sizes[2];
 
 	return (
-		<Navigator
+		<Tab.Navigator
 			screenOptions={{
 				headerShown: false,
 				tabBarShowLabel: false,
@@ -38,7 +53,7 @@ export function AppRoutes() {
 				},
 			}}
 		>
-			<Screen
+			<Tab.Screen
 				name="home"
 				component={Home}
 				options={{
@@ -47,8 +62,8 @@ export function AppRoutes() {
 					),
 				}}
 			/>
-			<Screen
-				name="myadds"
+			<Tab.Screen
+				name="myAds"
 				component={Home}
 				options={{
 					tabBarIcon: ({ color }) => (
@@ -56,8 +71,8 @@ export function AppRoutes() {
 					),
 				}}
 			/>
-			<Screen
-				name="signout"
+			<Tab.Screen
+				name="signOut"
 				component={Home}
 				options={{
 					tabBarIcon: ({ color }) => (
@@ -70,14 +85,16 @@ export function AppRoutes() {
 					),
 				}}
 			/>
-			<Screen
-				name="newAd"
-				component={NewAd}
-				options={{
-					tabBarButton: () => null,
-					tabBarStyle: { display: 'none' },
-				}}
-			/>
-		</Navigator>
+		</Tab.Navigator>
+	);
+}
+
+export function AppRoutes() {
+	return (
+		<Stack.Navigator screenOptions={{ headerShown: false }}>
+			<Stack.Screen name="main" component={TabRoutes} />
+			<Stack.Screen name="newAd" component={NewAd} />
+			<Stack.Screen name="previewAd" component={PreviewAd} />
+		</Stack.Navigator>
 	);
 }

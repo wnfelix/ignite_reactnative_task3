@@ -27,10 +27,3 @@ export const AvatarImage = styled(Image).attrs(() => ({
 	borderColor: 'white',
 	borderWidth: 1,
 }))``;
-
-interface IAdItemChipProps {
-	used: boolean;
-}
-export const AdItemChip = styled(Chip).attrs<IAdItemChipProps>(({ used }) => ({
-	bg: used ? 'gray.200' : 'primary.600',
-}))``;

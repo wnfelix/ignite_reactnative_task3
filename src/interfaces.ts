@@ -12,6 +12,18 @@ export interface IUser {
 	tel: string;
 }
 
+export type PaymentMethodType =
+	| 'ticket'
+	| 'pix'
+	| 'money'
+	| 'creditCard'
+	| 'bankDeposit';
+
+export interface IPaymentMethod {
+	key: PaymentMethodType;
+	name: string;
+}
+
 export interface IProduct {
 	id: string;
 	name: string;
@@ -25,12 +37,7 @@ export interface IProduct {
 			path: string;
 		}
 	];
-	payment_methods: [
-		{
-			key: string;
-			name: string;
-		}
-	];
+	payment_methods: IPaymentMethod[];
 	user: {
 		avatar: string;
 	};

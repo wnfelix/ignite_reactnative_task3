@@ -14,7 +14,7 @@ import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { AppNavigatorRoutesProps } from '@routes/app.routes';
+import { AppStackNavigatorRoutesProps } from '@routes/app.routes';
 import { AntDesign } from '@expo/vector-icons';
 import { Container } from '@styles/global';
 import { IInputProps, Input } from '@components/Input';
@@ -22,21 +22,25 @@ import { Button } from '@components/Button';
 import { FilePicker } from '@components/FilePicker';
 import { Loading } from '@components/Loading';
 import { getNewId } from '@utils/utils';
-import { IPhotoFile, IProduct } from 'src/interfaces';
+import {
+	IPaymentMethod,
+	IPhotoFile,
+	IProduct,
+	PaymentMethodType,
+} from 'src/interfaces';
 import { Footer, Header, Main, Title, ImageLoading } from './styles';
 import { ImageItem } from './components/ImageItem';
+import { paymentMethods } from 'src/constants';
 
-type PaymentMethodType =
-	| 'ticket'
-	| 'pix'
-	| 'money'
-	| 'creditCard'
-	| 'bankDeposit';
+// type PaymentMethodType =
+// 	| 'ticket'
+// 	| 'pix'
+// 	| 'money'
+// 	| 'creditCard'
+// 	| 'bankDeposit';
 
 interface IFormDataProps
-	extends Omit<IProduct, 'id' | 'product_images' | 'user' | 'payment_methods'> {
-	payment_methods: PaymentMethodType[];
-}
+	extends Omit<IProduct, 'id' | 'product_images' | 'user'> {}
 
 const emptyImage = {
 	name: getNewId(),
@@ -52,21 +56,21 @@ const signUpSchema = yup.object({
 	accept_trade: yup.bool().default(true),
 	payment_methods: yup
 		.array()
-		.of(yup.mixed<PaymentMethodType>().required())
+		.of(yup.mixed<IPaymentMethod>().required())
 		.min(1, 'Selecione pelo menos um método de pagamento')
 		.required('Informe os métodos de pagamento'),
 });
 
-const paymentMethodsList: { id: PaymentMethodType; label: string }[] = [
-	{ id: 'ticket', label: 'Boleto' },
-	{ id: 'pix', label: 'Pix' },
-	{ id: 'money', label: 'Dinheiro' },
-	{ id: 'creditCard', label: 'Cartão de Crédito' },
-	{ id: 'bankDeposit', label: 'Depósito Bancário' },
-];
+// const paymentMethodsList: { id: PaymentMethodType; label: string }[] = [
+// 	{ id: 'ticket', label: 'Boleto' },
+// 	{ id: 'pix', label: 'Pix' },
+// 	{ id: 'money', label: 'Dinheiro' },
+// 	{ id: 'creditCard', label: 'Cartão de Crédito' },
+// 	{ id: 'bankDeposit', label: 'Depósito Bancário' },
+// ];
 
 export function NewAd() {
-	const navigation = useNavigation<AppNavigatorRoutesProps>();
+	const navigation = useNavigation<AppStackNavigatorRoutesProps>();
 	const [images, setImages] = useState<IPhotoFile[]>([emptyImage]);
 	const {
 		control,
@@ -86,15 +90,6 @@ export function NewAd() {
 			setImages([emptyImage]);
 		}, [])
 	);
-
-	function handleCheckboxChange(method: PaymentMethodType) {
-		const currentValue = getValues('payment_methods');
-		const newValue = currentValue.includes(method)
-			? currentValue.filter((value: string) => value !== method)
-			: [...currentValue, method];
-
-		setValue('payment_methods', newValue, { shouldValidate: true });
-	}
 
 	/**
 	 * Generate HookForm Controller
@@ -127,8 +122,22 @@ export function NewAd() {
 		);
 	}
 
+	function handleCheckboxChange(value: PaymentMethodType) {
+		const method = paymentMethods.find(
+			item => item.key === value
+		) as IPaymentMethod;
+		const currentValue = getValues('payment_methods');
+		const newValue =
+			currentValue.findIndex(item => item.key === method.key) >= 0
+				? currentValue.filter(value => value.key !== method.key)
+				: [...currentValue, method];
+
+		setValue('payment_methods', newValue, { shouldValidate: true });
+	}
+
 	function handleCreateAdd(data: IFormDataProps) {
 		console.log(data);
+		navigation.navigate('previewAd', data);
 	}
 
 	function handleOnChangeImage(index: number, image: IPhotoFile) {
@@ -205,7 +214,7 @@ export function NewAd() {
 						{formField(
 							'description',
 							'Descrição do produto',
-							<Input numberOfLines={6} textAlignVertical="top" />,
+							<Input numberOfLines={6} textAlignVertical="top" multiline />,
 							errors.description?.message
 						)}
 						<Controller
@@ -255,19 +264,19 @@ export function NewAd() {
 						/>
 						<Text bold>Meios de pagamento aceitos</Text>
 						<FormControl isInvalid={!!errors.payment_methods?.message}>
-							{paymentMethodsList.map(({ id, label }) => (
+							{paymentMethods.map(({ key, name }) => (
 								<Controller
-									key={id}
+									key={key}
 									name="payment_methods"
 									control={control}
 									render={({ field: { value } }) => (
 										<Checkbox
 											size="sm"
-											value={id}
-											isChecked={value.includes(id)}
-											onChange={() => handleCheckboxChange(id)}
+											value={key}
+											isChecked={value.findIndex(item => item.key === key) >= 0}
+											onChange={() => handleCheckboxChange(key)}
 										>
-											{label}
+											{name}
 										</Checkbox>
 									)}
 								/>

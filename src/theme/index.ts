@@ -51,8 +51,11 @@ export const Theme = extendTheme({
 		xl: 24,
 	},
 	sizes: {
-		xs: 6,
-		sm: 4,
+		xs: 4,
+		'2xs': 8,
+		sm: 6,
+		'2sm': 12,
+		'3sm': 18,
 		md: 24,
 		lg: 32,
 	},
