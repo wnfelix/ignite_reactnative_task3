@@ -17,13 +17,13 @@ export function PaymentMethodItem({
 
 	function RenderItem() {
 		switch (key) {
-			case 'ticket':
+			case 'boleto':
 				return <Ionicons name="barcode-outline" size={size} color="black" />;
-			case 'bankDeposit':
+			case 'deposit':
 				return <FontAwesome name="bank" size={size} color="black" />;
-			case 'creditCard':
+			case 'card':
 				return <AntDesign name="creditcard" size={size} color="black" />;
-			case 'money':
+			case 'cash':
 				return <FontAwesome name="money" size={size} color="black" />;
 			case 'pix':
 				return <AntDesign name="qrcode" size={size} color="black" />;

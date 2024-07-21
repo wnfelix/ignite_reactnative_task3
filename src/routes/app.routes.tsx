@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Platform, TouchableOpacity } from 'react-native';
 import { Icon, useTheme } from 'native-base';
 import {
 	createBottomTabNavigator,
@@ -10,10 +10,11 @@ import {
 } from '@react-navigation/stack';
 import { AntDesign, Feather, Ionicons } from '@expo/vector-icons';
 
-import { IProduct } from 'src/interfaces';
+import { IPhotoFile, IProduct } from 'src/interfaces';
 import { Home } from '@screens/Home';
 import { NewAd } from '@screens/NewAd';
 import { PreviewAd } from '@screens/PreviewAd';
+import { useAuth } from '@hooks/useAuth';
 
 type TabAppRoutes = {
 	home: undefined;
@@ -24,7 +25,9 @@ type TabAppRoutes = {
 type StackAppRoutes = {
 	main: undefined;
 	newAd: undefined;
-	previewAd: Omit<IProduct, 'id' | 'product_images' | 'user'>;
+	previewAd: Omit<IProduct, 'id' | 'product_images' | 'user'> & {
+		photos: IPhotoFile[];
+	};
 };
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<TabAppRoutes>;
@@ -35,7 +38,7 @@ const Stack = createStackNavigator<StackAppRoutes>();
 
 function TabRoutes() {
 	const { sizes, colors } = useTheme();
-
+	const { signOut } = useAuth();
 	const iconSize = sizes[2];
 
 	return (
@@ -73,18 +76,24 @@ function TabRoutes() {
 			/>
 			<Tab.Screen
 				name="signOut"
-				component={Home}
 				options={{
 					tabBarIcon: ({ color }) => (
-						<Icon
-							as={Ionicons}
-							name="exit-outline"
-							size={iconSize}
-							color={color}
-						/>
+						<TouchableOpacity
+							onPress={signOut}
+							style={{ justifyContent: 'center' }}
+						>
+							<Icon
+								as={Ionicons}
+								name="exit-outline"
+								size={iconSize}
+								color={color}
+							/>
+						</TouchableOpacity>
 					),
 				}}
-			/>
+			>
+				{() => null}
+			</Tab.Screen>
 		</Tab.Navigator>
 	);
 }

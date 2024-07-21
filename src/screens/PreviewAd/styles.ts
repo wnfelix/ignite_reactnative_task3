@@ -1,3 +1,4 @@
+import { Chip } from '@components/Chip';
 import { HStack } from 'native-base';
 import styled from 'styled-components/native';
 
@@ -7,4 +8,5 @@ export const Footer = styled(HStack).attrs(() => ({
 	bgColor: 'white',
 	p: 4,
 	width: 'full',
+	space: 4,
 }))``;

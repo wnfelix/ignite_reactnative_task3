@@ -1,25 +1,72 @@
-import React from 'react';
-import { Text, Heading, VStack, HStack, useTheme } from 'native-base';
+import React, { useState } from 'react';
+import {
+	Text,
+	Heading,
+	VStack,
+	HStack,
+	useTheme,
+	View,
+	useToast,
+} from 'native-base';
+import { AntDesign } from '@expo/vector-icons';
 import { Container, ScrollView } from '@styles/global';
-import { Avatar } from '@components/Avatar';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAuth } from '@hooks/useAuth';
-import { IProduct } from 'src/interfaces';
-import { AdItemChip } from '@components/AdItemChip';
-import { formatCurrency } from '@utils/numberUtils';
-import { PaymentMethodItem } from '@components/PaymentMethodItem';
-import { Footer } from './styles';
-import { Button } from '@components/Button';
+import { formatNumber } from '@utils/numberUtils';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
+import { PaymentMethodItem } from '@components/PaymentMethodItem';
+import { Avatar } from '@components/Avatar';
+import { Button } from '@components/Button';
+import { Chip } from '@components/Chip';
+import productService from '@services/productService';
+import { AppError } from '@utils/AppError';
+import { IPhotoFile, IProduct } from 'src/interfaces';
+import { ImageContainer } from './components/ImageContainer';
+import { Footer } from './styles';
 
-type RouteParamsProps = Omit<IProduct, 'id' | 'user'> & {};
+type RouteParamsProps = Omit<IProduct, 'id' | 'user'> & {
+	photos: IPhotoFile[];
+};
 
 export function PreviewAd() {
-	const navigation = useNavigation<AppNavigatorRoutesProps>();
 	const { user } = useAuth();
-	const route = useRoute();
-	const newAd = route.params as RouteParamsProps;
 	const { sizes } = useTheme();
+	const toast = useToast();
+	const navigation = useNavigation<AppNavigatorRoutesProps>();
+	const route = useRoute();
+
+	const [isLoading, setIsLoading] = useState(false);
+
+	const newAd = route.params as RouteParamsProps;
+
+	async function handlePublish() {
+		setIsLoading(true);
+
+		try {
+			const { data: product } = await productService.create(newAd);
+			await productService.addPhotos(product.id, newAd.photos);
+
+			toast.show({
+				title: 'Anúncio cadastrado com sucesso!!',
+				placement: 'top',
+				bgColor: 'green.500',
+			});
+			navigation.navigate('home');
+		} catch (error) {
+			const isAppError = error instanceof AppError;
+			const title = isAppError
+				? error.message
+				: 'Não foi possível fazer login, tente novamente mais tarde!';
+
+			toast.show({
+				title: title,
+				placement: 'top',
+				bgColor: 'red.500',
+			});
+		} finally {
+			setIsLoading(false);
+		}
+	}
 
 	return (
 		<Container>
@@ -30,16 +77,30 @@ export function PreviewAd() {
 					</Heading>
 					<Text color="white">É assim que seu produto vai aparecer!</Text>
 				</VStack>
-				<Text>As fotos vão aqui</Text>
-				<VStack p={5} space={4}>
+				<ImageContainer photos={newAd.photos} />
+				<VStack p={5} space={3}>
 					<HStack space={2} alignItems={'center'}>
 						<Avatar avatar={user.avatar} size={sizes[2]} />
 						<Text>{user.name}</Text>
 					</HStack>
-					<AdItemChip used={!newAd.is_new} mr="auto" />
-					<HStack justifyContent="space-between">
+					<Chip
+						mr="auto"
+						bg="gray.500"
+						color="black"
+						title={!newAd.is_new ? 'USADO' : 'NOVO'}
+						borderWidth={0}
+						bold
+					/>
+					<HStack justifyContent="space-between" flexWrap={'wrap'}>
 						<Heading>{newAd.name}</Heading>
-						<Text>{formatCurrency(newAd.price)}</Text>
+						<View flexDirection={'row'} alignItems={'flex-end'}>
+							<Text fontSize={16} pb={1} color={'blue.light'} bold>
+								R$
+							</Text>
+							<Text fontSize={28} color={'blue.light'} bold>
+								{formatNumber(newAd.price)}
+							</Text>
+						</View>
 					</HStack>
 					<Text>{newAd.description}</Text>
 					<HStack space={2}>
@@ -56,15 +117,28 @@ export function PreviewAd() {
 			<Footer>
 				<Button
 					borderRadius={6}
-					width="2/5"
+					flex={1}
 					onPress={() => navigation.goBack()}
+					flexDirection="row"
 				>
-					<Text color="black" bold>
-						Voltar e editar
-					</Text>
+					<HStack space={2}>
+						<AntDesign name="arrowleft" size={24} color="black" />
+						<Text color="black" bold>
+							Voltar e editar
+						</Text>
+					</HStack>
 				</Button>
-				<Button borderRadius={6} width="2/5" bgColor="black">
-					<Text color="white">Publicar</Text>
+				<Button
+					borderRadius={6}
+					flex={1}
+					bgColor="blue.light"
+					isLoading={isLoading}
+					onPress={handlePublish}
+				>
+					<HStack space={2}>
+						<AntDesign name="tago" size={24} color="white" />
+						<Text color="white">Publicar</Text>
+					</HStack>
 				</Button>
 			</Footer>
 		</Container>

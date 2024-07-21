@@ -85,11 +85,11 @@ export function NewAd() {
 		},
 	});
 
-	useFocusEffect(
-		useCallback(() => {
-			setImages([emptyImage]);
-		}, [])
-	);
+	// useFocusEffect(
+	// 	useCallback(() => {
+	// 		setImages([emptyImage]);
+	// 	}, [])
+	// );
 
 	/**
 	 * Generate HookForm Controller
@@ -137,7 +137,10 @@ export function NewAd() {
 
 	function handleCreateAdd(data: IFormDataProps) {
 		console.log(data);
-		navigation.navigate('previewAd', data);
+		navigation.navigate('previewAd', {
+			...data,
+			photos: images.filter(i => i.uri.length > 0),
+		});
 	}
 
 	function handleOnChangeImage(index: number, image: IPhotoFile) {

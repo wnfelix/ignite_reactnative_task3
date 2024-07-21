@@ -12,12 +12,7 @@ export interface IUser {
 	tel: string;
 }
 
-export type PaymentMethodType =
-	| 'ticket'
-	| 'pix'
-	| 'money'
-	| 'creditCard'
-	| 'bankDeposit';
+export type PaymentMethodType = 'boleto' | 'pix' | 'cash' | 'card' | 'deposit';
 
 export interface IPaymentMethod {
 	key: PaymentMethodType;
