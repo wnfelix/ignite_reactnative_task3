@@ -23,6 +23,7 @@ import { AppError } from '@utils/AppError';
 import { IPhotoFile, IProduct } from 'src/interfaces';
 import { ImageContainer } from '@components/ImageContainer';
 import { Footer } from './styles';
+import { tryCatch } from '@utils/utils';
 
 type RouteParamsProps = Omit<IProduct, 'id' | 'user'> & {
 	photos: IPhotoFile[];
@@ -30,9 +31,9 @@ type RouteParamsProps = Omit<IProduct, 'id' | 'user'> & {
 
 export function PreviewAd() {
 	const { user } = useAuth();
+	const navigation = useNavigation<AppNavigatorRoutesProps>();
 	const { sizes } = useTheme();
 	const toast = useToast();
-	const navigation = useNavigation<AppNavigatorRoutesProps>();
 	const route = useRoute();
 
 	const [isLoading, setIsLoading] = useState(false);
@@ -40,32 +41,20 @@ export function PreviewAd() {
 	const newAd = route.params as RouteParamsProps;
 
 	async function handlePublish() {
-		setIsLoading(true);
+		tryCatch({
+			tryMethod: async () => {
+				setIsLoading(true);
+				const { data: product } = await productService.create(newAd);
+				await productService.addPhotos(product.id, newAd.photos);
 
-		try {
-			const { data: product } = await productService.create(newAd);
-			await productService.addPhotos(product.id, newAd.photos);
-
-			toast.show({
-				title: 'Anúncio cadastrado com sucesso!!',
-				placement: 'top',
-				bgColor: 'green.500',
-			});
-			navigation.navigate('home');
-		} catch (error) {
-			const isAppError = error instanceof AppError;
-			const title = isAppError
-				? error.message
-				: 'Não foi possível fazer login, tente novamente mais tarde!';
-
-			toast.show({
-				title: title,
-				placement: 'top',
-				bgColor: 'red.500',
-			});
-		} finally {
-			setIsLoading(false);
-		}
+				navigation.navigate('myAds');
+			},
+			finallyMethod: () => setIsLoading(false),
+			successMessage: 'Anúncio cadastrado com sucesso!!',
+			errorMessage:
+				'Não foi possível cadastrar um novo anúncio, tente novamente mais tarde',
+			toast: toast,
+		});
 	}
 
 	return (
@@ -91,16 +80,21 @@ export function PreviewAd() {
 						borderWidth={0}
 						bold
 					/>
-					<HStack justifyContent="space-between" flexWrap={'wrap'}>
+					<HStack
+						justifyContent="space-between"
+						flexWrap={'wrap'}
+						alignItems="center"
+						space={3}
+					>
 						<Heading>{newAd.name}</Heading>
-						<View flexDirection={'row'} alignItems={'flex-end'}>
+						<HStack flexDirection={'row'} alignItems={'flex-end'} space={1}>
 							<Text fontSize={16} pb={1} color={'blue.light'} bold>
 								R$
 							</Text>
 							<Text fontSize={28} color={'blue.light'} bold>
 								{formatNumber(newAd.price)}
 							</Text>
-						</View>
+						</HStack>
 					</HStack>
 					<Text>{newAd.description}</Text>
 					<HStack space={2}>

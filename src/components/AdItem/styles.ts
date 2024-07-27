@@ -2,15 +2,12 @@ import { HStack, Image, VStack, View } from 'native-base';
 import styled from 'styled-components/native';
 
 export const Container = styled(VStack).attrs(() => ({
-	mr: 4,
 	mb: 4,
-	w: 40,
-}))`
-	/* width: 150px; */
-`;
+	flex: 0.47,
+}))``;
 
 export const AdItemImage = styled(Image).attrs(() => ({
-	h: 32,
+	h: 24,
 	borderRadius: 8,
 }))``;
 

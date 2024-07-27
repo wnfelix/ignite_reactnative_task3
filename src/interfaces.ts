@@ -35,6 +35,7 @@ export interface IProduct {
 	payment_methods: IPaymentMethod[];
 	user: {
 		avatar: string;
+		name: string;
 	};
 	is_active?: boolean;
 }

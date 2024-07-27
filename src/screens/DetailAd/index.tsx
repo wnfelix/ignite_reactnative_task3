@@ -1,22 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import {
-	Text,
-	Heading,
-	VStack,
-	HStack,
-	useTheme,
-	View,
-	Icon,
-} from 'native-base';
-import { AntDesign } from '@expo/vector-icons';
+import { Text, Heading, VStack, HStack, useTheme } from 'native-base';
 import { Container, ScrollView } from '@styles/global';
-import {
-	useFocusEffect,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native';
-import { AppNavigatorRoutesProps } from '@routes/app.routes';
-import { useAuth } from '@hooks/useAuth';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { formatNumber } from '@utils/numberUtils';
 import { PaymentMethodItem } from '@components/PaymentMethodItem';
 import { Avatar } from '@components/Avatar';
@@ -26,14 +11,13 @@ import productService from '@services/productService';
 import { IProduct } from 'src/interfaces';
 import { Footer } from './components/Footer';
 import { ChipItem } from './styles';
+import { Header } from './components/Header';
 
 type RouteParamsProps = {
 	id: string;
 };
 
 export function DetailAd() {
-	const { user } = useAuth();
-	const navigation = useNavigation<AppNavigatorRoutesProps>();
 	const { sizes } = useTheme();
 	const route = useRoute();
 	const { id } = route.params as RouteParamsProps;
@@ -44,7 +28,8 @@ export function DetailAd() {
 	async function fetchProduct() {
 		const data = await productService.getOne(id);
 
-		setAdItem(data);
+		// setAdItem(data);
+		setAdItem({ ...data });
 		setIsLoading(false);
 	}
 
@@ -60,15 +45,7 @@ export function DetailAd() {
 				<Loading />
 			) : (
 				<>
-					<VStack p={5}>
-						<Icon
-							as={AntDesign}
-							name="arrowleft"
-							color="black"
-							size="xl"
-							onPress={() => navigation.goBack()}
-						/>
-					</VStack>
+					<Header id={id} />
 					<ScrollView>
 						<ImageContainer
 							photos={adItem.product_images.map(pi => ({
@@ -76,24 +53,30 @@ export function DetailAd() {
 								name: pi.id,
 								uri: productService.getPhotoUri(pi.path),
 								type: '',
+								disabled: !adItem.is_active,
 							}))}
 						/>
 						<VStack p={5} space={3}>
 							<HStack space={2} alignItems="center">
-								<Avatar avatar={user.avatar} size={sizes[2]} />
-								<Text>{user.name}</Text>
+								<Avatar avatar={adItem.user.avatar} size={sizes[2]} />
+								<Text>{adItem.user.name}</Text>
 							</HStack>
 							<ChipItem title={!adItem.is_new ? 'USADO' : 'NOVO'} />
-							<HStack justifyContent="space-between" flexWrap="wrap">
+							<HStack
+								justifyContent="space-between"
+								flexWrap="wrap"
+								alignItems="center"
+								space="3"
+							>
 								<Heading>{adItem.name}</Heading>
-								<View flexDirection="row" alignItems="flex-end">
+								<HStack flexDirection="row" alignItems="flex-end" space={1}>
 									<Text fontSize={16} pb={1} color={'blue.light'} bold>
 										R$
 									</Text>
-									<Text fontSize={28} color={'blue.light'} bold>
+									<Text fontSize={24} color={'blue.light'} bold>
 										{formatNumber(adItem.price)}
 									</Text>
-								</View>
+								</HStack>
 							</HStack>
 							<Text>{adItem.description}</Text>
 							<HStack space={2}>

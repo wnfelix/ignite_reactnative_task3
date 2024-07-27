@@ -21,14 +21,3 @@ export const ContactButton = styled(Button).attrs(() => ({
 	flex: 1,
 	bgColor: 'blue.light',
 }))``;
-
-export const InativeButton = styled(Button).attrs(() => ({
-	w: 'full',
-	borderRadius: 6,
-	bgColor: 'black',
-}))``;
-
-export const DeleteButton = styled(Button).attrs(() => ({
-	w: 'full',
-	borderRadius: 6,
-}))``;

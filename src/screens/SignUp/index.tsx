@@ -90,11 +90,6 @@ export function SignUp() {
 				placement: 'top',
 				bgColor: 'red.500',
 			});
-
-			if (axios.isAxiosError(error)) {
-				console.log('axios error', error.response?.data.message);
-				console.log('axios error', error.response);
-			}
 		}
 	}
 

@@ -57,10 +57,20 @@ async function addPhotos(productId: string, photos: IPhotoFile[]) {
 	});
 }
 
+async function changeStatus(productId: string, active: boolean) {
+	return api.patch(`products/${productId}`, { is_active: active });
+}
+
+async function deleteProduct(productId: string) {
+	return api.delete(`products/${productId}`);
+}
+
 export default {
 	create,
 	addPhotos,
 	getAll,
 	getOne,
 	getPhotoUri,
+	changeStatus,
+	deleteProduct,
 };

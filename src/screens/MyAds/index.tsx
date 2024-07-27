@@ -82,6 +82,7 @@ export function MyAds() {
 					numColumns={2}
 					showsVerticalScrollIndicator={false}
 					_contentContainerStyle={{ paddingBottom: 4 }}
+					columnWrapperStyle={{ justifyContent: 'space-between' }}
 				/>
 			</Main>
 		</Container>

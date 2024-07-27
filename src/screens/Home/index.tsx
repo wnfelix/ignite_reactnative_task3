@@ -19,10 +19,12 @@ import { Filter } from './components/Filter';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import productService from '@services/productService';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
+import userService from '@services/userService';
 
 export function Home() {
 	const navigator = useNavigation<AppNavigatorRoutesProps>();
 	const [ads, setAds] = useState<IProduct[]>([]);
+	const [activeCount, setActiveCount] = useState(0);
 	const [showFilter, setShowFilter] = useState(false);
 
 	useFocusEffect(
@@ -34,6 +36,9 @@ export function Home() {
 	async function fetchProducts() {
 		const data = await productService.getAll();
 		setAds(data);
+
+		const myProducts = await userService.getMyProducts();
+		setActiveCount(myProducts.filter(i => i.is_active).length);
 	}
 
 	return (
@@ -45,7 +50,7 @@ export function Home() {
 					<ActiveAddsSection>
 						<Icon as={Feather} name="tag" size={6} color="blue.normal" />
 						<VStack>
-							<Heading>{ads.length}</Heading>
+							<Heading>{activeCount}</Heading>
 							<Text>anúncios ativos</Text>
 						</VStack>
 						<MyAddsLink onPress={() => navigator.navigate('myAds')}>
@@ -84,6 +89,7 @@ export function Home() {
 						renderItem={({ item }) => <AdItem {...item} />}
 						numColumns={2}
 						showsVerticalScrollIndicator={false}
+						columnWrapperStyle={{ justifyContent: 'space-between' }}
 						_contentContainerStyle={{ paddingBottom: 4 }}
 					/>
 				</Main>
