@@ -10,10 +10,20 @@ export const ImageItem = styled(Image)`
 	justify-content: center;
 `;
 
+export const Overlay = styled.View`
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+`;
+
 interface IPaginationItemProps {
 	length: number;
 }
-
 export const PaginationItem = styled(
 	Pagination.Basic
 ).attrs<IPaginationItemProps>(({ length }) => ({

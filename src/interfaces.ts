@@ -36,4 +36,5 @@ export interface IProduct {
 	user: {
 		avatar: string;
 	};
+	is_active?: boolean;
 }

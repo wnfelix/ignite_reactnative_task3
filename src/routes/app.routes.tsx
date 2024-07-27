@@ -15,6 +15,8 @@ import { Home } from '@screens/Home';
 import { NewAd } from '@screens/NewAd';
 import { PreviewAd } from '@screens/PreviewAd';
 import { useAuth } from '@hooks/useAuth';
+import { DetailAd } from '@screens/DetailAd';
+import { MyAds } from '@screens/MyAds';
 
 type TabAppRoutes = {
 	home: undefined;
@@ -25,6 +27,7 @@ type TabAppRoutes = {
 type StackAppRoutes = {
 	main: undefined;
 	newAd: undefined;
+	detailAd: { id: string };
 	previewAd: Omit<IProduct, 'id' | 'product_images' | 'user'> & {
 		photos: IPhotoFile[];
 	};
@@ -67,7 +70,7 @@ function TabRoutes() {
 			/>
 			<Tab.Screen
 				name="myAds"
-				component={Home}
+				component={MyAds}
 				options={{
 					tabBarIcon: ({ color }) => (
 						<Icon as={Feather} name="tag" size={iconSize} color={color} />
@@ -104,6 +107,7 @@ export function AppRoutes() {
 			<Stack.Screen name="main" component={TabRoutes} />
 			<Stack.Screen name="newAd" component={NewAd} />
 			<Stack.Screen name="previewAd" component={PreviewAd} />
+			<Stack.Screen name="detailAd" component={DetailAd} />
 		</Stack.Navigator>
 	);
 }

@@ -1,6 +1,33 @@
 import { IPhotoFile, IProduct } from 'src/interfaces';
 import { api } from './api';
 
+interface IGetAllParams {
+	is_new?: boolean;
+	accept_trade?: boolean;
+	payment_methods?: string;
+	query?: string;
+}
+async function getAll(filter?: IGetAllParams) {
+	const params = new URLSearchParams();
+	if (filter?.is_new !== undefined)
+		params.append('is_new', filter.is_new.toString());
+	if (filter?.accept_trade !== undefined)
+		params.append('accept_trade', filter?.accept_trade.toString());
+	if (filter?.payment_methods)
+		params.append('payment_methods', filter?.payment_methods);
+	if (filter?.query) params.append('query', filter?.query);
+
+	return api
+		.get<IProduct[]>(`products?${params.toString()}`)
+		.then(({ data }) => data.map(p => ({ ...p, price: p.price / 100 })));
+}
+
+async function getOne(id: string) {
+	return api
+		.get<IProduct>(`products/${id}`)
+		.then(({ data }) => ({ ...data, price: data.price / 100 }));
+}
+
 async function create(
 	entity: Omit<IProduct, 'id' | 'user' | 'product_images'>
 ) {
@@ -11,6 +38,10 @@ async function create(
 	};
 
 	return api.post<IProduct>('products', payload);
+}
+
+function getPhotoUri(imagePath: string) {
+	return `${api.defaults.baseURL}images/${imagePath}`;
 }
 
 async function addPhotos(productId: string, photos: IPhotoFile[]) {
@@ -29,4 +60,7 @@ async function addPhotos(productId: string, photos: IPhotoFile[]) {
 export default {
 	create,
 	addPhotos,
+	getAll,
+	getOne,
+	getPhotoUri,
 };

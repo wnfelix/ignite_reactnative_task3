@@ -1,5 +1,5 @@
 import { api } from '@services/api';
-import { IPhotoFile, IUser } from 'src/interfaces';
+import { IPhotoFile, IProduct, IUser } from 'src/interfaces';
 
 interface ISessionUser {
 	token: string;
@@ -31,7 +31,14 @@ async function login(email: string, password: string) {
 	return api.post<ISessionUser>('/sessions', { email, password });
 }
 
+async function getMyProducts() {
+	return api
+		.get<IProduct[]>('/users/products')
+		.then(({ data }) => data.map(i => ({ ...i, price: i.price / 100 })));
+}
+
 export default {
 	create,
 	login,
+	getMyProducts,
 };

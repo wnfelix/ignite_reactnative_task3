@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { TouchableOpacity } from 'react-native';
 import {
 	HStack,
 	Heading,
@@ -10,75 +10,32 @@ import {
 	FlatList,
 } from 'native-base';
 import { Feather, AntDesign, FontAwesome6, Ionicons } from '@expo/vector-icons';
-import { useAuth } from '@hooks/useAuth';
 import { Input } from '@components/Input';
 import { AdItem } from '@components/AdItem';
 import { Header } from './components/Header';
 import { ActiveAddsSection, Container, Main, MyAddsLink } from './styles';
 import { IProduct } from 'src/interfaces';
 import { Filter } from './components/Filter';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import productService from '@services/productService';
+import { AppNavigatorRoutesProps } from '@routes/app.routes';
 
 export function Home() {
-	const { user } = useAuth();
-	const [products, setProducts] = useState<IProduct[]>([
-		{
-			id: '1',
-			name: 'Calça branca',
-			price: 150.5,
-			is_new: false,
-			description: '',
-			accept_trade: true,
-			payment_methods: [{ key: 'deposit', name: '' }],
-			product_images: [{ id: '', path: '' }],
-			user: { avatar: '' },
-		},
-		{
-			id: '2',
-			name: 'Blusa Vermelha',
-			price: 120,
-			is_new: true,
-			description: '',
-			accept_trade: true,
-			payment_methods: [{ key: 'card', name: '' }],
-			product_images: [{ id: '', path: '' }],
-			user: { avatar: '' },
-		},
-		{
-			id: '3',
-			name: 'Regata',
-			price: 50.984,
-			is_new: true,
-			description: '',
-			accept_trade: true,
-			payment_methods: [{ key: 'pix', name: '' }],
-			product_images: [{ id: '', path: '' }],
-			user: { avatar: '' },
-		},
-		{
-			id: '4',
-			name: 'Moletom',
-			price: 50.984,
-			is_new: false,
-			description: '',
-			accept_trade: true,
-			payment_methods: [{ key: 'cash', name: '' }],
-			product_images: [{ id: '', path: '' }],
-			user: { avatar: '' },
-		},
-		{
-			id: '5',
-			name: 'Terno Armani',
-			price: 50.984,
-			is_new: true,
-			description: '',
-			accept_trade: true,
-			payment_methods: [{ key: 'boleto', name: '' }],
-			product_images: [{ id: '', path: '' }],
-			user: { avatar: '' },
-		},
-	]);
-
+	const navigator = useNavigation<AppNavigatorRoutesProps>();
+	const [ads, setAds] = useState<IProduct[]>([]);
 	const [showFilter, setShowFilter] = useState(false);
+
+	useFocusEffect(
+		useCallback(() => {
+			fetchProducts();
+		}, [])
+	);
+
+	async function fetchProducts() {
+		const data = await productService.getAll();
+		setAds(data);
+	}
+
 	return (
 		<>
 			<Container>
@@ -88,10 +45,10 @@ export function Home() {
 					<ActiveAddsSection>
 						<Icon as={Feather} name="tag" size={6} color="blue.normal" />
 						<VStack>
-							<Heading>4</Heading>
+							<Heading>{ads.length}</Heading>
 							<Text>anúncios ativos</Text>
 						</VStack>
-						<MyAddsLink>
+						<MyAddsLink onPress={() => navigator.navigate('myAds')}>
 							<Text color="blue.normal">Meus anúncios</Text>
 							<Icon
 								as={AntDesign}
@@ -121,23 +78,13 @@ export function Home() {
 							</HStack>
 						}
 					/>
-
 					<FlatList
-						data={products}
+						data={ads}
 						keyExtractor={item => item.id}
-						renderItem={({ item }) => (
-							<AdItem
-								price={item.price}
-								title={item.name}
-								used={!item.is_new}
-							/>
-						)}
+						renderItem={({ item }) => <AdItem {...item} />}
 						numColumns={2}
 						showsVerticalScrollIndicator={false}
 						_contentContainerStyle={{ paddingBottom: 4 }}
-						ItemSeparatorComponent={() => (
-							<View style={{ width: 20, height: 20, borderWidth: 1 }} />
-						)}
 					/>
 				</Main>
 			</Container>

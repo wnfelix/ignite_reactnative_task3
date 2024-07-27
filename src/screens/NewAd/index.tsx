@@ -1,11 +1,10 @@
-import { cloneElement, useCallback, useEffect, useState } from 'react';
+import { cloneElement, useState } from 'react';
 import {
 	Checkbox,
 	FormControl,
 	HStack,
 	Icon,
 	Radio,
-	ScrollView,
 	Switch,
 	Text,
 	VStack,
@@ -13,10 +12,11 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { AppStackNavigatorRoutesProps } from '@routes/app.routes';
 import { AntDesign } from '@expo/vector-icons';
-import { Container } from '@styles/global';
+import { paymentMethods } from 'src/constants';
+import { Container, ScrollView } from '@styles/global';
 import { IInputProps, Input } from '@components/Input';
 import { Button } from '@components/Button';
 import { FilePicker } from '@components/FilePicker';
@@ -28,16 +28,18 @@ import {
 	IProduct,
 	PaymentMethodType,
 } from 'src/interfaces';
-import { Footer, Header, Main, Title, ImageLoading } from './styles';
+import {
+	Footer,
+	Header,
+	Main,
+	Title,
+	ImageLoading,
+	BackIcon,
+	ProductSection,
+	CancelButton,
+	NextButton,
+} from './styles';
 import { ImageItem } from './components/ImageItem';
-import { paymentMethods } from 'src/constants';
-
-// type PaymentMethodType =
-// 	| 'ticket'
-// 	| 'pix'
-// 	| 'money'
-// 	| 'creditCard'
-// 	| 'bankDeposit';
 
 interface IFormDataProps
 	extends Omit<IProduct, 'id' | 'product_images' | 'user'> {}
@@ -61,14 +63,6 @@ const signUpSchema = yup.object({
 		.required('Informe os métodos de pagamento'),
 });
 
-// const paymentMethodsList: { id: PaymentMethodType; label: string }[] = [
-// 	{ id: 'ticket', label: 'Boleto' },
-// 	{ id: 'pix', label: 'Pix' },
-// 	{ id: 'money', label: 'Dinheiro' },
-// 	{ id: 'creditCard', label: 'Cartão de Crédito' },
-// 	{ id: 'bankDeposit', label: 'Depósito Bancário' },
-// ];
-
 export function NewAd() {
 	const navigation = useNavigation<AppStackNavigatorRoutesProps>();
 	const [images, setImages] = useState<IPhotoFile[]>([emptyImage]);
@@ -84,12 +78,6 @@ export function NewAd() {
 			payment_methods: [],
 		},
 	});
-
-	// useFocusEffect(
-	// 	useCallback(() => {
-	// 		setImages([emptyImage]);
-	// 	}, [])
-	// );
 
 	/**
 	 * Generate HookForm Controller
@@ -136,7 +124,6 @@ export function NewAd() {
 	}
 
 	function handleCreateAdd(data: IFormDataProps) {
-		console.log(data);
 		navigation.navigate('previewAd', {
 			...data,
 			photos: images.filter(i => i.uri.length > 0),
@@ -164,19 +151,14 @@ export function NewAd() {
 	return (
 		<Container>
 			<Header>
-				<Icon
+				<BackIcon
 					as={AntDesign}
 					name="arrowleft"
-					color="black"
-					size="xl"
 					onPress={() => navigation.goBack()}
 				/>
 				<Title>Criar anúncio</Title>
 			</Header>
-			<ScrollView
-				contentContainerStyle={{ flexGrow: 1 }}
-				showsVerticalScrollIndicator={false}
-			>
+			<ScrollView>
 				<Main>
 					<Text bold fontSize="md">
 						Imagens
@@ -204,7 +186,7 @@ export function NewAd() {
 							/>
 						))}
 					</HStack>
-					<VStack mt={4} space={3}>
+					<ProductSection>
 						<Text bold fontSize="md">
 							Sobre o produto
 						</Text>
@@ -288,26 +270,17 @@ export function NewAd() {
 								{errors.payment_methods?.message}
 							</FormControl.ErrorMessage>
 						</FormControl>
-					</VStack>
+					</ProductSection>
 				</Main>
 				<Footer>
-					<Button
-						borderRadius={6}
-						width="2/5"
-						onPress={() => navigation.goBack()}
-					>
+					<CancelButton onPress={() => navigation.goBack()}>
 						<Text color="black" bold>
 							Cancelar
 						</Text>
-					</Button>
-					<Button
-						borderRadius={6}
-						width="2/5"
-						bgColor="black"
-						onPress={handleSubmit(handleCreateAdd)}
-					>
+					</CancelButton>
+					<NextButton onPress={handleSubmit(handleCreateAdd)}>
 						<Text color="white">Avançar</Text>
-					</Button>
+					</NextButton>
 				</Footer>
 			</ScrollView>
 		</Container>

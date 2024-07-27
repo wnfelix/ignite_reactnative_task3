@@ -21,7 +21,7 @@ import { Chip } from '@components/Chip';
 import productService from '@services/productService';
 import { AppError } from '@utils/AppError';
 import { IPhotoFile, IProduct } from 'src/interfaces';
-import { ImageContainer } from './components/ImageContainer';
+import { ImageContainer } from '@components/ImageContainer';
 import { Footer } from './styles';
 
 type RouteParamsProps = Omit<IProduct, 'id' | 'user'> & {

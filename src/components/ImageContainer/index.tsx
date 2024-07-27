@@ -1,15 +1,20 @@
 import React, { useRef } from 'react';
 import { Dimensions } from 'react-native';
-import { View } from 'native-base';
+import { View, Text } from 'native-base';
 import { useSharedValue } from 'react-native-reanimated';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 import { IPhotoFile } from 'src/interfaces';
-import { ImageItem, PaginationItem } from './styles';
+import { ImageItem, Overlay, PaginationItem } from './styles';
 
 const width = Dimensions.get('window').width;
 
+interface IInativeImage {
+	disabled?: boolean;
+	title?: string;
+}
+
 interface IImageContainerProps {
-	photos: IPhotoFile[];
+	photos: (IPhotoFile & IInativeImage)[];
 }
 
 export function ImageContainer({ photos }: IImageContainerProps) {
@@ -19,10 +24,6 @@ export function ImageContainer({ photos }: IImageContainerProps) {
 
 	function onPressPagination(index: number) {
 		ref.current?.scrollTo({
-			/**
-			 * Calculate the difference between the current index and the target index
-			 * to ensure that the carousel scrolls to the nearest index
-			 */
 			count: index - progress.value,
 			animated: true,
 		});
@@ -37,10 +38,19 @@ export function ImageContainer({ photos }: IImageContainerProps) {
 				data={data}
 				onProgressChange={progress}
 				renderItem={({ index }) => (
-					<ImageItem
-						alt={`imagem ${index} do anúncio`}
-						source={{ uri: photos[index].uri }}
-					/>
+					<>
+						<ImageItem
+							alt={`imagem ${index} do anúncio`}
+							source={{ uri: photos[index].uri }}
+						/>
+						{photos[index].disabled && (
+							<Overlay>
+								<Text bold color="white">
+									ANÚNCIO DESATIVADO
+								</Text>
+							</Overlay>
+						)}
+					</>
 				)}
 			/>
 			<PaginationItem

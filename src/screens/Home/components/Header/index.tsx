@@ -3,12 +3,15 @@ import { VStack, Text, Heading, HStack } from 'native-base';
 import { useAuth } from '@hooks/useAuth';
 import { Container, AddButton, AddIcon } from './styles';
 import { useNavigation } from '@react-navigation/native';
-import { AppNavigatorRoutesProps } from '@routes/app.routes';
+import {
+	AppNavigatorRoutesProps,
+	AppStackNavigatorRoutesProps,
+} from '@routes/app.routes';
 import { Avatar } from '@components/Avatar';
 
 export function Header() {
 	const { user } = useAuth();
-	const navigation = useNavigation<AppNavigatorRoutesProps>();
+	const navigation = useNavigation<AppStackNavigatorRoutesProps>();
 
 	return (
 		<Container>
