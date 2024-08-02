@@ -1,28 +1,17 @@
 import styled from 'styled-components/native';
-import {
-	HStack,
-	Heading,
-	VStack,
-	Image as NativeImage,
-	Box,
-	Icon,
-} from 'native-base';
+import { HStack, Heading, VStack, Box, Icon } from 'native-base';
 import { Button } from '@components/Button';
 
 export const Header = styled(HStack).attrs(() => ({
-	px: 5,
+	px: 2,
 	py: 2,
 	pt: 5,
-}))``;
-
-export const BackIcon = styled(Icon).attrs(() => ({
-	color: 'black',
-	size: 24,
+	alignItems: 'center',
 }))``;
 
 export const Title = styled(Heading).attrs(() => ({
 	fontSize: 'lg',
-	width: '5/6',
+	width: '3/4',
 	textAlign: 'center',
 }))``;
 

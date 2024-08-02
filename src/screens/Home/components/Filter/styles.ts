@@ -8,13 +8,13 @@ export const TextButton = styled(Text).attrs(() => ({
 }))``;
 
 export const ClearButton = styled(Button)`
-	width: 45%;
+	flex: 1;
 	border-radius: 8px;
 `;
 
 export const ApplyButton = styled(Button).attrs(() => ({
 	bgColor: 'black',
 }))`
-	width: 45%;
+	flex: 1;
 	border-radius: 8px;
 `;

@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-	Text,
-	Heading,
-	VStack,
-	HStack,
-	useTheme,
-	View,
-	useToast,
-} from 'native-base';
+import { Text, Heading, VStack, HStack, useTheme, useToast } from 'native-base';
 import { AntDesign } from '@expo/vector-icons';
 import { Container, ScrollView } from '@styles/global';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -19,14 +11,13 @@ import { Avatar } from '@components/Avatar';
 import { Button } from '@components/Button';
 import { Chip } from '@components/Chip';
 import productService from '@services/productService';
-import { AppError } from '@utils/AppError';
 import { IPhotoFile, IProduct } from 'src/interfaces';
 import { ImageContainer } from '@components/ImageContainer';
-import { Footer } from './styles';
 import { tryCatch } from '@utils/utils';
+import { Footer } from './styles';
 
-type RouteParamsProps = Omit<IProduct, 'id' | 'user'> & {
-	photos: IPhotoFile[];
+type RouteParamsProps = Omit<IProduct, 'user'> & {
+	product_images: IPhotoFile[];
 };
 
 export function PreviewAd() {
@@ -44,13 +35,17 @@ export function PreviewAd() {
 		tryCatch({
 			tryMethod: async () => {
 				setIsLoading(true);
-				const { data: product } = await productService.create(newAd);
-				await productService.addPhotos(product.id, newAd.photos);
-
+				if (newAd.id) {
+					await productService.update(newAd);
+				} else {
+					await productService.create(newAd);
+				}
 				navigation.navigate('myAds');
 			},
 			finallyMethod: () => setIsLoading(false),
-			successMessage: 'Anúncio cadastrado com sucesso!!',
+			successMessage: `Anúncio ${
+				newAd.id ? 'atualizado' : 'cadastrado'
+			} com sucesso!!`,
 			errorMessage:
 				'Não foi possível cadastrar um novo anúncio, tente novamente mais tarde',
 			toast: toast,
@@ -66,7 +61,7 @@ export function PreviewAd() {
 					</Heading>
 					<Text color="white">É assim que seu produto vai aparecer!</Text>
 				</VStack>
-				<ImageContainer photos={newAd.photos} />
+				<ImageContainer photos={newAd.product_images} />
 				<VStack p={5} space={3}>
 					<HStack space={2} alignItems={'center'}>
 						<Avatar avatar={user.avatar} size={sizes[2]} />

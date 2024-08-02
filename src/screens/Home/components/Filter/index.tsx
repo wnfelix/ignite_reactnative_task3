@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react';
 import { StyleSheet } from 'react-native';
 import { Heading, Text, HStack, VStack, Checkbox, Switch } from 'native-base';
 import BottomSheet, {
@@ -7,15 +13,35 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { Chip } from './components/Chip';
 import { ApplyButton, ClearButton, TextButton } from './styles';
+import { paymentMethods } from 'src/constants';
+import { PaymentMethodType } from 'src/interfaces';
+import { IGetAllParams } from '@services/productService';
 
 interface IFilterProps {
 	show: boolean;
 	onClose: () => void;
+	onChange: (filter?: IGetAllParams) => void;
 }
 
 export function Filter(props: IFilterProps) {
 	const [sectionIndex, setSectionIndex] = useState(0);
 	const bottomSheetRef = useRef<BottomSheet>(null);
+	const [newProduct, setNewProduct] = useState(false);
+	const [usedProduct, setUsedProduct] = useState(false);
+	const [acceptTrade, setAcceptTrade] = useState<boolean>();
+	const [payments, setPayments] = useState<PaymentMethodType[]>([]);
+
+	// const isChecked: { [key in PaymentMethodType]: { checked: boolean } } =
+	// 	useMemo(() => {
+	// 		console.log(payments);
+	// 		return {
+	// 			boleto: { checked: payments.findIndex(i => i === 'boleto') > -1 },
+	// 			pix: { checked: payments.findIndex(i => i === 'pix') > -1 },
+	// 			cash: { checked: payments.findIndex(i => i === 'cash') > -1 },
+	// 			card: { checked: payments.findIndex(i => i === 'card') > -1 },
+	// 			deposit: { checked: payments.findIndex(i => i === 'deposit') > -1 },
+	// 		};
+	// 	}, [payments]);
 
 	useEffect(() => {
 		setSectionIndex(props.show ? 1 : 0);
@@ -26,6 +52,46 @@ export function Filter(props: IFilterProps) {
 			props.onClose();
 		}
 	}, []);
+
+	function handlePaymentType(payment: PaymentMethodType) {
+		setPayments(prevState => {
+			const items = [...prevState];
+			const index = items.findIndex(i => i === payment);
+			if (index > -1) {
+				items.splice(index, 1);
+			} else {
+				items.push(payment);
+			}
+
+			return items;
+		});
+	}
+
+	function handleApplyFilter() {
+		const params: IGetAllParams = {
+			accept_trade: acceptTrade,
+			is_new:
+				(newProduct && usedProduct) || (!newProduct && !usedProduct)
+					? undefined
+					: newProduct,
+			payment_methods: payments.length > 0 ? payments : undefined,
+		};
+
+		setSectionIndex(0);
+		props.onChange(params);
+		props.onClose();
+	}
+
+	function handleClearFilter() {
+		setUsedProduct(false);
+		setNewProduct(false);
+		setAcceptTrade(undefined);
+		setPayments([]);
+
+		setSectionIndex(0);
+		props.onChange();
+		props.onClose();
+	}
 
 	return (
 		<BottomSheet
@@ -40,39 +106,36 @@ export function Filter(props: IFilterProps) {
 				<Heading>Filtrar anúncios</Heading>
 				<Text bold>Condição</Text>
 				<HStack space="3">
-					<Chip onSelected={() => console.log('teste')} title="NOVO" />
-					<Chip onSelected={() => console.log('teste')} title="USADO" />
+					<Chip onSelected={setNewProduct} title="NOVO" />
+					<Chip onSelected={setUsedProduct} title="USADO" />
 				</HStack>
 				<VStack my="3">
 					<Text bold>Aceita troca?</Text>
 					<Switch
 						size="lg"
-						onToggle={() => console.log('mudou')}
+						onToggle={() => setAcceptTrade(!acceptTrade)}
 						width="10"
 						height="8"
+						isChecked={acceptTrade}
 					/>
 				</VStack>
 				<Text bold>Meios de pagamento aceitos</Text>
-				<Checkbox size="sm" value="ticket">
-					Boleto
-				</Checkbox>
-				<Checkbox size="sm" value="pix">
-					Pix
-				</Checkbox>
-				<Checkbox size="sm" value="money">
-					Dinheiro
-				</Checkbox>
-				<Checkbox size="sm" value="creditCard">
-					Cartão de Crédito
-				</Checkbox>
-				<Checkbox size="sm" value="bankDeposit">
-					Depósito Bancário
-				</Checkbox>
-				<HStack mt="12" justifyContent="space-around">
-					<ClearButton>
+				{paymentMethods.map(item => (
+					<Checkbox
+						key={item.key}
+						size="sm"
+						value={item.key}
+						isChecked={payments.findIndex(i => i === item.key) > -1}
+						onChange={() => handlePaymentType(item.key)}
+					>
+						{item.name}
+					</Checkbox>
+				))}
+				<HStack mt="12" justifyContent="space-around" space={4}>
+					<ClearButton onPress={handleClearFilter}>
 						<TextButton color="black">Limpar filtros</TextButton>
 					</ClearButton>
-					<ApplyButton>
+					<ApplyButton onPress={handleApplyFilter}>
 						<TextButton color="white">Aplicar filtros</TextButton>
 					</ApplyButton>
 				</HStack>

@@ -5,6 +5,7 @@ import {
 	Heading,
 	HStack,
 	Icon,
+	IconButton,
 	Select,
 	Text,
 } from 'native-base';
@@ -43,16 +44,18 @@ export function MyAds() {
 
 	return (
 		<Container>
-			<HStack>
-				<Heading width="full" textAlign="center">
+			<HStack alignItems="center">
+				<Heading
+					textAlign="center"
+					marginRight="auto"
+					position="relative"
+					width="full"
+				>
 					Meus anúncios
 				</Heading>
-				<Icon
-					as={AntDesign}
-					name="plus"
-					color="black"
-					size="xl"
-					ml="auto"
+				<IconButton
+					icon={<Icon as={AntDesign} name="plus" color="black" size="xl" />}
+					borderRadius="full"
 					onPress={() => navigator.navigate('newAd')}
 				/>
 			</HStack>

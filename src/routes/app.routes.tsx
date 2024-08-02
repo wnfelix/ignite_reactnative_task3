@@ -27,9 +27,10 @@ type TabAppRoutes = {
 type StackAppRoutes = {
 	main: undefined;
 	newAd: undefined;
+	editAd: { id: string };
 	detailAd: { id: string };
-	previewAd: Omit<IProduct, 'id' | 'product_images' | 'user'> & {
-		photos: IPhotoFile[];
+	previewAd: Omit<IProduct, 'product_images' | 'user'> & {
+		product_images: IPhotoFile[];
 	};
 };
 
@@ -106,6 +107,7 @@ export function AppRoutes() {
 		<Stack.Navigator screenOptions={{ headerShown: false }}>
 			<Stack.Screen name="main" component={TabRoutes} />
 			<Stack.Screen name="newAd" component={NewAd} />
+			<Stack.Screen name="editAd" component={NewAd} />
 			<Stack.Screen name="previewAd" component={PreviewAd} />
 			<Stack.Screen name="detailAd" component={DetailAd} />
 		</Stack.Navigator>

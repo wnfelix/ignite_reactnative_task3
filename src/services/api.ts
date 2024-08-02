@@ -1,9 +1,9 @@
 import {
 	storageAuthTokenGet,
 	storageAuthTokenSave,
-} from "@storage/storageAuthToken";
-import { AppError } from "@utils/AppError";
-import axios, { AxiosError, AxiosInstance } from "axios";
+} from '@storage/storageAuthToken';
+import { AppError } from '@utils/AppError';
+import axios, { AxiosError, AxiosInstance } from 'axios';
 
 type SignOut = () => void;
 
@@ -17,7 +17,7 @@ interface IAPIInstanceProps extends AxiosInstance {
 }
 
 const api = axios.create({
-	baseURL: "http://192.168.0.13:3333/",
+	baseURL: 'http://192.168.15.9:3333/',
 }) as IAPIInstanceProps;
 
 let failedQueue: IPromiseType[] = [];
@@ -29,13 +29,14 @@ api.registerInterceptTokenManager = signOut => {
 			return response;
 		},
 		async requestError => {
+			console.log('tem token', requestError);
+
 			if (requestError?.response?.status === 401) {
 				if (
-					requestError.response.data?.message === "token.expired" ||
-					requestError.response.data?.message === "token.invalid"
+					requestError.response.data?.message === 'token.expired' ||
+					requestError.response.data?.message === 'token.invalid'
 				) {
 					const { refresh_token } = await storageAuthTokenGet();
-
 					if (!refresh_token) {
 						signOut();
 						return Promise.reject(requestError);
@@ -62,7 +63,7 @@ api.registerInterceptTokenManager = signOut => {
 
 					return new Promise(async (resolve, reject) => {
 						try {
-							const { data } = await api.post("/sessions/refresh-token", {
+							const { data } = await api.post('/sessions/refresh-token', {
 								refresh_token,
 							});
 							await storageAuthTokenSave({
@@ -80,14 +81,14 @@ api.registerInterceptTokenManager = signOut => {
 								Authorization: `Bearer ${data.token}`,
 							};
 							api.defaults.headers.common[
-								"Authorization"
+								'Authorization'
 							] = `Bearer ${data.token}`;
 
 							failedQueue.forEach(request => {
 								request.onSuccess(data.token);
 							});
 
-							console.log("token atualizado");
+							console.log('token atualizado');
 							resolve(api(originalRequestConfig));
 						} catch (error: any) {
 							failedQueue.forEach(request => {

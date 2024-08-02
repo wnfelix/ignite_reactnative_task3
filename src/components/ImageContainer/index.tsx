@@ -10,7 +10,6 @@ const width = Dimensions.get('window').width;
 
 interface IInativeImage {
 	disabled?: boolean;
-	title?: string;
 }
 
 interface IImageContainerProps {

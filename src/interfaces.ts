@@ -36,6 +36,7 @@ export interface IProduct {
 	user: {
 		avatar: string;
 		name: string;
+		tel: string;
 	};
 	is_active?: boolean;
 }

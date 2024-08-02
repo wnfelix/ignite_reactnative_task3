@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
+import { Linking } from 'react-native';
+import { Text, HStack, useToast } from 'native-base';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '@hooks/useAuth';
 import { IProduct } from 'src/interfaces';
-import { ContactButton, FooterBuy, FooterMyAd } from './styles';
-import { View, Text, HStack, useToast } from 'native-base';
-import { formatNumber } from '@utils/numberUtils';
 import { FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { ActionButton } from './components/ActionButton';
 import productService from '@services/productService';
+import { formatNumber } from '@utils/numberUtils';
 import { tryCatch } from '@utils/utils';
+import { ActionButton } from './components/ActionButton';
+import { ContactButton, FooterBuy, FooterMyAd } from './styles';
 
 interface IFooterProps extends IProduct {}
 
@@ -55,6 +56,17 @@ export function Footer(props: IFooterProps) {
 		});
 	}
 
+	async function handleContactWhatsApp() {
+		const {
+			user: { tel, name },
+		} = props;
+		const message = `Olá ${name}, fiquei interessado no seu anúncio ${props.name} e gostaria de negociar`;
+		const url = `whatsapp://send?text=${encodeURIComponent(
+			message
+		)}&phone=55${tel}`;
+		Linking.openURL(url);
+	}
+
 	return props.user.avatar !== user.avatar ? (
 		<FooterBuy>
 			<HStack flexDirection="row" alignItems="flex-end" space={1}>
@@ -65,7 +77,7 @@ export function Footer(props: IFooterProps) {
 					{formatNumber(props.price)}
 				</Text>
 			</HStack>
-			<ContactButton>
+			<ContactButton onPress={handleContactWhatsApp}>
 				<HStack space={2}>
 					<FontAwesome name="whatsapp" size={24} color="white" />
 					<Text color="white">Entrar em contato</Text>

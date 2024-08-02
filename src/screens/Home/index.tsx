@@ -17,7 +17,7 @@ import { ActiveAddsSection, Container, Main, MyAddsLink } from './styles';
 import { IProduct } from 'src/interfaces';
 import { Filter } from './components/Filter';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import productService from '@services/productService';
+import productService, { IGetAllParams } from '@services/productService';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
 import userService from '@services/userService';
 
@@ -26,19 +26,28 @@ export function Home() {
 	const [ads, setAds] = useState<IProduct[]>([]);
 	const [activeCount, setActiveCount] = useState(0);
 	const [showFilter, setShowFilter] = useState(false);
+	const [textFilter, setTextFilter] = useState<string | undefined>();
+	const [filters, setFilters] = useState<IGetAllParams>();
 
 	useFocusEffect(
 		useCallback(() => {
 			fetchProducts();
-		}, [])
+		}, [filters])
 	);
 
 	async function fetchProducts() {
-		const data = await productService.getAll();
+		const data = await productService.getAll(filters);
 		setAds(data);
 
 		const myProducts = await userService.getMyProducts();
 		setActiveCount(myProducts.filter(i => i.is_active).length);
+	}
+
+	function handleSearchButton() {
+		setFilters(prevState => ({
+			...prevState,
+			query: textFilter ? textFilter : undefined,
+		}));
 	}
 
 	return (
@@ -66,9 +75,12 @@ export function Home() {
 					<Text mt={3}>Compre produtos variados</Text>
 					<Input
 						placeholder="Buscar anúncio"
+						onChangeText={setTextFilter}
+						returnKeyType="search"
+						onSubmitEditing={handleSearchButton}
 						InputRightElement={
 							<HStack h={8} alignItems="center" mx={3}>
-								<TouchableOpacity>
+								<TouchableOpacity onPress={handleSearchButton}>
 									<Icon
 										as={FontAwesome6}
 										name="magnifying-glass"
@@ -94,7 +106,11 @@ export function Home() {
 					/>
 				</Main>
 			</Container>
-			<Filter show={showFilter} onClose={() => setShowFilter(false)} />
+			<Filter
+				show={showFilter}
+				onClose={() => setShowFilter(false)}
+				onChange={setFilters}
+			/>
 		</>
 	);
 }

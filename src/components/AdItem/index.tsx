@@ -3,12 +3,12 @@ import { Container, AdItemImage, Header, AvatarImage, Overlay } from './styles';
 import { Text } from 'native-base';
 import { formatCurrency } from '@utils/numberUtils';
 import { api } from '@services/api';
-import { AdItemChip } from '@components/AdItemChip';
 import { TouchableOpacity, TouchableWithoutFeedbackProps } from 'react-native';
 import { IProduct } from 'src/interfaces';
 import productService from '@services/productService';
 import { useNavigation } from '@react-navigation/native';
 import { AppStackNavigatorRoutesProps } from '@routes/app.routes';
+import { Chip } from '@components/Chip';
 
 interface IAdItemProps
 	extends IProduct,
@@ -48,14 +48,18 @@ export function AdItem({
 						alt="avatar"
 					/>
 				)}
-				<AdItemChip used={!props.is_new} ml="auto" />
+				<Chip
+					bg={!props.is_new ? 'gray.200' : 'primary.600'}
+					title={!props.is_new ? 'USADO' : 'NOVO'}
+					ml="auto"
+				/>
 			</Header>
 			{!is_active && (
 				<Text
 					bold
 					position="absolute"
 					color="white"
-					mt={24}
+					mt={16}
 					p={2}
 					fontSize="xs"
 				>

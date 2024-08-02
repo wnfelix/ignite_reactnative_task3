@@ -14,10 +14,12 @@ export function Chip(props: IChipProps) {
 
 	function handleClose() {
 		setClosed(true);
+		props.onSelected(false);
 	}
 
 	function handlePress() {
 		if (closed) setClosed(false);
+		props.onSelected(true);
 	}
 
 	return (

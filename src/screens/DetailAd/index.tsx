@@ -28,8 +28,7 @@ export function DetailAd() {
 	async function fetchProduct() {
 		const data = await productService.getOne(id);
 
-		// setAdItem(data);
-		setAdItem({ ...data });
+		setAdItem(data);
 		setIsLoading(false);
 	}
 
@@ -45,11 +44,10 @@ export function DetailAd() {
 				<Loading />
 			) : (
 				<>
-					<Header id={id} />
+					<Header id={id} user={adItem.user} />
 					<ScrollView>
 						<ImageContainer
 							photos={adItem.product_images.map(pi => ({
-								id: pi.id,
 								name: pi.id,
 								uri: productService.getPhotoUri(pi.path),
 								type: '',
