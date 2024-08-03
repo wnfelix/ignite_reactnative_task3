@@ -8,6 +8,7 @@ import {
 	Icon,
 	Divider,
 	FlatList,
+	useToast,
 } from 'native-base';
 import { Feather, AntDesign, FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { Input } from '@components/Input';
@@ -20,14 +21,18 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import productService, { IGetAllParams } from '@services/productService';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
 import userService from '@services/userService';
+import { tryCatch } from '@utils/utils';
+import { Loading } from '@components/Loading';
 
 export function Home() {
 	const navigator = useNavigation<AppNavigatorRoutesProps>();
+	const toast = useToast();
 	const [ads, setAds] = useState<IProduct[]>([]);
 	const [activeCount, setActiveCount] = useState(0);
 	const [showFilter, setShowFilter] = useState(false);
 	const [textFilter, setTextFilter] = useState<string | undefined>();
 	const [filters, setFilters] = useState<IGetAllParams>();
+	const [isLoading, setIsLoading] = useState(true);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -36,11 +41,22 @@ export function Home() {
 	);
 
 	async function fetchProducts() {
-		const data = await productService.getAll(filters);
-		setAds(data);
+		setIsLoading(true);
+		tryCatch({
+			tryMethod: async () => {
+				const data = await productService.getAll(filters);
+				setAds(data);
 
-		const myProducts = await userService.getMyProducts();
-		setActiveCount(myProducts.filter(i => i.is_active).length);
+				const myProducts = await userService.getMyProducts();
+				setActiveCount(myProducts.filter(i => i.is_active).length);
+			},
+			finallyMethod: () => {
+				setIsLoading(false);
+			},
+			errorMessage:
+				'Não foi possível carregar os anúncios, tente novamente em instantes',
+			toast: toast,
+		});
 	}
 
 	function handleSearchButton() {
@@ -48,6 +64,18 @@ export function Home() {
 			...prevState,
 			query: textFilter ? textFilter : undefined,
 		}));
+	}
+
+	function handleApplyFilters(value?: IGetAllParams) {
+		setFilters({
+			...value,
+			query: textFilter ? textFilter : undefined,
+		});
+	}
+
+	function handleResetFilters() {
+		setFilters(undefined);
+		setTextFilter(undefined);
 	}
 
 	return (
@@ -72,44 +100,58 @@ export function Home() {
 							/>
 						</MyAddsLink>
 					</ActiveAddsSection>
-					<Text mt={3}>Compre produtos variados</Text>
-					<Input
-						placeholder="Buscar anúncio"
-						onChangeText={setTextFilter}
-						returnKeyType="search"
-						onSubmitEditing={handleSearchButton}
-						InputRightElement={
-							<HStack h={8} alignItems="center" mx={3}>
-								<TouchableOpacity onPress={handleSearchButton}>
-									<Icon
-										as={FontAwesome6}
-										name="magnifying-glass"
-										size={5}
-										color="black"
-									/>
-								</TouchableOpacity>
-								<Divider orientation="vertical" mx={3} />
-								<TouchableOpacity onPress={() => setShowFilter(true)}>
-									<Icon as={Ionicons} name="options" size={5} color="black" />
-								</TouchableOpacity>
-							</HStack>
-						}
-					/>
-					<FlatList
-						data={ads}
-						keyExtractor={item => item.id}
-						renderItem={({ item }) => <AdItem {...item} />}
-						numColumns={2}
-						showsVerticalScrollIndicator={false}
-						columnWrapperStyle={{ justifyContent: 'space-between' }}
-						_contentContainerStyle={{ paddingBottom: 4 }}
-					/>
+					{isLoading ? (
+						<Loading size="lg" />
+					) : (
+						<>
+							<Text mt={3}>Compre produtos variados</Text>
+							<Input
+								placeholder="Buscar anúncio"
+								maxLength={50}
+								value={textFilter}
+								onChangeText={setTextFilter}
+								returnKeyType="search"
+								onSubmitEditing={handleSearchButton}
+								InputRightElement={
+									<HStack h={8} alignItems="center" mx={3}>
+										<TouchableOpacity onPress={handleSearchButton}>
+											<Icon
+												as={FontAwesome6}
+												name="magnifying-glass"
+												size={5}
+												color="black"
+											/>
+										</TouchableOpacity>
+										<Divider orientation="vertical" mx={3} />
+										<TouchableOpacity onPress={() => setShowFilter(true)}>
+											<Icon
+												as={Ionicons}
+												name="options"
+												size={5}
+												color="black"
+											/>
+										</TouchableOpacity>
+									</HStack>
+								}
+							/>
+							<FlatList
+								data={ads}
+								keyExtractor={item => item.id}
+								renderItem={({ item }) => <AdItem {...item} />}
+								numColumns={2}
+								showsVerticalScrollIndicator={false}
+								columnWrapperStyle={{ justifyContent: 'space-between' }}
+								_contentContainerStyle={{ paddingBottom: 4 }}
+							/>
+						</>
+					)}
 				</Main>
 			</Container>
 			<Filter
 				show={showFilter}
 				onClose={() => setShowFilter(false)}
-				onChange={setFilters}
+				onReset={handleResetFilters}
+				onChange={handleApplyFilters}
 			/>
 		</>
 	);

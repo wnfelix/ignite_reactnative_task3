@@ -1,6 +1,6 @@
 import { cloneElement, useContext, useState } from 'react';
 import axios from 'axios';
-import { ScrollView, Text, useToast } from 'native-base';
+import { Text, useToast } from 'native-base';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -23,6 +23,7 @@ import {
 } from './styles';
 import { Header } from './components/Header';
 import { AvatarPhoto } from './components/AvatarPhoto';
+import { ScrollView } from '@styles/global';
 
 interface IFormDataProps extends Pick<IUser, 'name' | 'email' | 'tel'> {
 	password: string;
@@ -34,6 +35,7 @@ const signUpSchema = yup.object({
 	email: yup.string().required('Informe o email').email('Email inválido'),
 	tel: yup
 		.string()
+		.matches(/^\d{11}$/, 'Informe um número válido de telefone com DDD')
 		.required('É obrigatório informar o telefone')
 		.min(11, 'Informe o telefone com DDD'),
 	password: yup
@@ -125,23 +127,35 @@ export function SignUp() {
 	}
 
 	return (
-		<ScrollView
-			contentContainerStyle={{ flexGrow: 1 }}
-			showsVerticalScrollIndicator={false}
-		>
+		<ScrollView>
 			<Container>
 				<Header />
 				<Main>
 					<SectionAvatar>
 						<AvatarPhoto onChange={setAvatar} />
 					</SectionAvatar>
-					{formField('name', 'Nome', <Input />, errors.name?.message)}
-					{formField('email', 'E-mail', <Input />, errors.email?.message)}
-					{formField('tel', 'Telefone', <Input />, errors.tel?.message)}
+					{formField(
+						'name',
+						'Nome',
+						<Input maxLength={100} />,
+						errors.name?.message
+					)}
+					{formField(
+						'email',
+						'E-mail',
+						<Input autoCapitalize="none" keyboardType="email-address" />,
+						errors.email?.message
+					)}
+					{formField(
+						'tel',
+						'Telefone',
+						<Input keyboardType="numeric" maxLength={11} />,
+						errors.tel?.message
+					)}
 					{formField(
 						'password',
 						'Senha',
-						<InputPassword />,
+						<InputPassword maxLength={128} />,
 						errors.password?.message
 					)}
 					{formField(

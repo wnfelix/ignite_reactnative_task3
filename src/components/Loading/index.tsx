@@ -1,9 +1,10 @@
-import { Spinner, Center } from "native-base";
+import { Spinner, Center, ISpinnerProps } from 'native-base';
 
-export function Loading() {
+interface ILoadingProps extends ISpinnerProps {}
+export function Loading({ color = 'blue.normal', size = 'sm' }: ILoadingProps) {
 	return (
-		<Center flex={1} bg={"gray.700"}>
-			<Spinner color={"gray.500"} />
+		<Center flex={1} bg={'gray.700'}>
+			<Spinner color={color} size={size} />
 		</Center>
 	);
 }

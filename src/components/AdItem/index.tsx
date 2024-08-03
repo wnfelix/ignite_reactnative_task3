@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, AdItemImage, Header, AvatarImage, Overlay } from './styles';
-import { Text } from 'native-base';
-import { formatCurrency } from '@utils/numberUtils';
+import { HStack, Text } from 'native-base';
 import { api } from '@services/api';
 import { TouchableOpacity, TouchableWithoutFeedbackProps } from 'react-native';
 import { IProduct } from 'src/interfaces';
@@ -9,6 +8,7 @@ import productService from '@services/productService';
 import { useNavigation } from '@react-navigation/native';
 import { AppStackNavigatorRoutesProps } from '@routes/app.routes';
 import { Chip } from '@components/Chip';
+import { Price } from '@components/Price';
 
 interface IAdItemProps
 	extends IProduct,
@@ -67,9 +67,15 @@ export function AdItem({
 				</Text>
 			)}
 			<Text color={is_active ? 'black' : 'gray.400'}>{props.name}</Text>
-			<Text bold color={is_active ? 'black' : 'gray.400'}>
-				{formatCurrency(props.price)}
-			</Text>
+			<HStack space={1}>
+				<Price
+					value={props.price}
+					color={is_active ? 'black' : 'gray.400'}
+					symbolSize="xs"
+					pb={0}
+					pt={0.5}
+				/>
+			</HStack>
 		</Container>
 	);
 }

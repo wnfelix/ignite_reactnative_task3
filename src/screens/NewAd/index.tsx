@@ -1,4 +1,4 @@
-import { cloneElement, useCallback, useState } from 'react';
+import { cloneElement, useEffect, useState } from 'react';
 import {
 	Checkbox,
 	FormControl,
@@ -10,11 +10,7 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-	useFocusEffect,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { AppStackNavigatorRoutesProps } from '@routes/app.routes';
 import { paymentMethods } from 'src/constants';
 import { Container, ScrollView } from '@styles/global';
@@ -41,9 +37,13 @@ import {
 import { ImageItem } from './components/ImageItem';
 import { BackIconButton } from '@components/BackIconButton';
 import productService from '@services/productService';
+import { formatNumber } from '@utils/numberUtils';
+import { parseNumber } from '@utils/stringUtils';
 
 interface IFormDataProps
-	extends Omit<IProduct, 'id' | 'product_images' | 'user'> {}
+	extends Omit<IProduct, 'id' | 'product_images' | 'user' | 'price'> {
+	price: string;
+}
 
 const LIMIT_PHOTOS = 3;
 
@@ -56,7 +56,13 @@ const emptyImage = {
 const signUpSchema = yup.object({
 	name: yup.string().required('Informe o nome do produto'),
 	description: yup.string().required('Informe a descrição do produto'),
-	price: yup.number().required('Informe o preço').moreThan(0.99),
+	price: yup
+		.string()
+		.required('Informe o preço')
+		.matches(
+			/^\d+([,]\d{1,2})?$/,
+			'O preço deve ser um número válido com até duas casas decimais'
+		),
 	is_new: yup.bool().default(true),
 	accept_trade: yup.bool().default(true),
 	payment_methods: yup
@@ -72,6 +78,7 @@ type RouteParamsProps = {
 
 export function NewAd() {
 	const navigation = useNavigation<AppStackNavigatorRoutesProps>();
+	// const [isEditing, setIsEditing] = useState(true);
 	const [images, setImages] = useState<IPhotoFile[]>([emptyImage]);
 	const [id, setId] = useState<string>();
 	const [isLoading, setIsLoading] = useState(true);
@@ -91,12 +98,10 @@ export function NewAd() {
 	const route = useRoute();
 	const params = route.params as RouteParamsProps;
 
-	useFocusEffect(
-		useCallback(() => {
-			fetchProduct();
-			setId(params?.id);
-		}, [])
-	);
+	useEffect(() => {
+		fetchProduct();
+		setId(params?.id);
+	}, []);
 
 	async function fetchProduct() {
 		if (params?.id) {
@@ -104,7 +109,7 @@ export function NewAd() {
 			setValue('name', product.name);
 			setValue('description', product.description);
 			setValue('is_new', product.is_new);
-			setValue('price', product.price);
+			setValue('price', formatNumber(product.price));
 			setValue('accept_trade', product.accept_trade);
 			setValue('payment_methods', product.payment_methods);
 
@@ -183,6 +188,7 @@ export function NewAd() {
 	function handleCreateAdd(data: IFormDataProps) {
 		navigation.navigate('previewAd', {
 			...data,
+			price: parseNumber(data.price),
 			id: id ?? '',
 			product_images: images.filter(i => i.uri.length > 0),
 		});
@@ -264,13 +270,18 @@ export function NewAd() {
 								{formField(
 									'name',
 									'Título do anúncio',
-									<Input />,
+									<Input maxLength={50} />,
 									errors.name?.message
 								)}
 								{formField(
 									'description',
 									'Descrição do produto',
-									<Input numberOfLines={6} textAlignVertical="top" multiline />,
+									<Input
+										numberOfLines={6}
+										textAlignVertical="top"
+										multiline
+										maxLength={2000}
+									/>,
 									errors.description?.message
 								)}
 								<Controller
@@ -296,6 +307,8 @@ export function NewAd() {
 									<Input
 										placeholder="Valor do produto"
 										fontSize="md"
+										maxLength={12}
+										keyboardType="numeric"
 										InputLeftElement={
 											<Text pl={4} fontSize="md">
 												R$

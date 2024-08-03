@@ -1,8 +1,8 @@
-import { Button } from "@components/Button";
-import { AntDesign } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { Input, IInputProps } from "@components/Input";
-import { useState } from "react";
+import { Button } from '@components/Button';
+import { AntDesign } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { Input, IInputProps } from '@components/Input';
+import { useState } from 'react';
 
 interface IInputPasswordProps extends IInputProps {}
 

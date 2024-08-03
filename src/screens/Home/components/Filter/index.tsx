@@ -1,10 +1,4 @@
-import React, {
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Heading, Text, HStack, VStack, Checkbox, Switch } from 'native-base';
 import BottomSheet, {
@@ -20,7 +14,8 @@ import { IGetAllParams } from '@services/productService';
 interface IFilterProps {
 	show: boolean;
 	onClose: () => void;
-	onChange: (filter?: IGetAllParams) => void;
+	onChange: (filter: IGetAllParams) => void;
+	onReset: () => void;
 }
 
 export function Filter(props: IFilterProps) {
@@ -30,18 +25,6 @@ export function Filter(props: IFilterProps) {
 	const [usedProduct, setUsedProduct] = useState(false);
 	const [acceptTrade, setAcceptTrade] = useState<boolean>();
 	const [payments, setPayments] = useState<PaymentMethodType[]>([]);
-
-	// const isChecked: { [key in PaymentMethodType]: { checked: boolean } } =
-	// 	useMemo(() => {
-	// 		console.log(payments);
-	// 		return {
-	// 			boleto: { checked: payments.findIndex(i => i === 'boleto') > -1 },
-	// 			pix: { checked: payments.findIndex(i => i === 'pix') > -1 },
-	// 			cash: { checked: payments.findIndex(i => i === 'cash') > -1 },
-	// 			card: { checked: payments.findIndex(i => i === 'card') > -1 },
-	// 			deposit: { checked: payments.findIndex(i => i === 'deposit') > -1 },
-	// 		};
-	// 	}, [payments]);
 
 	useEffect(() => {
 		setSectionIndex(props.show ? 1 : 0);
@@ -89,7 +72,8 @@ export function Filter(props: IFilterProps) {
 		setPayments([]);
 
 		setSectionIndex(0);
-		props.onChange();
+		// props.onChange();
+		props.onReset();
 		props.onClose();
 	}
 
@@ -133,7 +117,7 @@ export function Filter(props: IFilterProps) {
 				))}
 				<HStack mt="12" justifyContent="space-around" space={4}>
 					<ClearButton onPress={handleClearFilter}>
-						<TextButton color="black">Limpar filtros</TextButton>
+						<TextButton color="black">Resetar filtros</TextButton>
 					</ClearButton>
 					<ApplyButton onPress={handleApplyFilter}>
 						<TextButton color="white">Aplicar filtros</TextButton>

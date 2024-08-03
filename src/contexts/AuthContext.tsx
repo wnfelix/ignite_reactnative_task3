@@ -59,7 +59,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 	}
 
 	async function signIn(email: string, password: string) {
-		const { data } = await userService.login(email, password);
+		const { data } = await userService.login(email.trim(), password.trim());
 		try {
 			if (data.user && data.token && data.refresh_token) {
 				setIsLoadingUserStorage(true);

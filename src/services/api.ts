@@ -17,7 +17,7 @@ interface IAPIInstanceProps extends AxiosInstance {
 }
 
 const api = axios.create({
-	baseURL: 'http://192.168.15.9:3333/',
+	baseURL: 'http://192.168.15.126:3333/',
 }) as IAPIInstanceProps;
 
 let failedQueue: IPromiseType[] = [];

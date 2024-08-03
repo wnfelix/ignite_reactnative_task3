@@ -10,6 +10,7 @@ import { formatNumber } from '@utils/numberUtils';
 import { tryCatch } from '@utils/utils';
 import { ActionButton } from './components/ActionButton';
 import { ContactButton, FooterBuy, FooterMyAd } from './styles';
+import { Price } from '@components/Price';
 
 interface IFooterProps extends IProduct {}
 
@@ -69,14 +70,7 @@ export function Footer(props: IFooterProps) {
 
 	return props.user.avatar !== user.avatar ? (
 		<FooterBuy>
-			<HStack flexDirection="row" alignItems="flex-end" space={1}>
-				<Text color="blue.light" fontSize={16} pb={1} bold>
-					R$
-				</Text>
-				<Text color="blue.light" fontSize={28} bold>
-					{formatNumber(props.price)}
-				</Text>
-			</HStack>
+			<Price value={props.price} color="blue.light" fontSize={28} />
 			<ContactButton onPress={handleContactWhatsApp}>
 				<HStack space={2}>
 					<FontAwesome name="whatsapp" size={24} color="white" />

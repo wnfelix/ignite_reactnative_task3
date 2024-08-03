@@ -50,6 +50,7 @@ export function MyAds() {
 					marginRight="auto"
 					position="relative"
 					width="full"
+					fontSize={20}
 				>
 					Meus anúncios
 				</Heading>

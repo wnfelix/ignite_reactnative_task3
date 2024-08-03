@@ -51,13 +51,21 @@ export function SignIn() {
 				<Text mb={10} fontSize="sm">
 					Seu espaço de compra e venda
 				</Text>
-
 				<Text fontSize="xs">Acesse sua conta</Text>
-				<Input placeholder="E-mail" onChangeText={setEmail} value={email} />
+				<Input
+					placeholder="E-mail"
+					onChangeText={setEmail}
+					value={email}
+					autoCapitalize="none"
+					keyboardType="email-address"
+					maxLength={50}
+				/>
 				<InputPassword
 					placeholder="Senha"
 					onChangeText={setPassword}
+					onSubmitEditing={handleSignIn}
 					value={password}
+					maxLength={128}
 				/>
 				<SignInButton isLoading={isLoading} onPress={handleSignIn}>
 					Entrar

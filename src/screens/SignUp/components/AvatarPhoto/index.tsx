@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { Image, IImageProps, useToast, Skeleton } from "native-base";
-import GenerateUUID from "react-native-uuid";
-import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
+import { useState } from 'react';
+import { Image, IImageProps, useToast, Skeleton } from 'native-base';
+import GenerateUUID from 'react-native-uuid';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import Avatar from "@assets/Avatar.png";
-import { AvatarEditButton } from "./styles";
-import { IPhotoFile } from "src/interfaces";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Avatar from '@assets/Avatar.png';
+import { AvatarEditButton } from './styles';
+import { IPhotoFile } from 'src/interfaces';
 
 interface IUserPhotoProps extends IImageProps {
 	onChange: (photoFile: IPhotoFile) => void;
@@ -37,12 +37,12 @@ export function AvatarPhoto(props: IUserPhotoProps) {
 
 				if (photoInfo.size && photoInfo.size / 1024 / 1024 > sizeLimitFileInMb)
 					return toast.show({
-						title: "Essa imagem é muito grande, o limite é de 3mb.",
-						placement: "top",
-						bgColor: "red.500",
+						title: 'Essa imagem é muito grande, o limite é de 3mb.',
+						placement: 'top',
+						bgColor: 'red.500',
 					});
 
-				const fileExtension = asset.uri.split(".").pop();
+				const fileExtension = asset.uri.split('.').pop();
 				const photoFile = {
 					name: `${uuid().toString()}.${fileExtension}`.toLowerCase(),
 					uri: asset.uri,
@@ -55,9 +55,9 @@ export function AvatarPhoto(props: IUserPhotoProps) {
 		} catch (error) {
 			console.log(error);
 			toast.show({
-				title: "Ocorreu um erro ao tentar atualizar a foto",
-				placement: "top",
-				bgColor: "red.500",
+				title: 'Ocorreu um erro ao tentar atualizar a foto',
+				placement: 'top',
+				bgColor: 'red.500',
 			});
 		} finally {
 			setPhotoIsLoading(false);
@@ -81,6 +81,8 @@ export function AvatarPhoto(props: IUserPhotoProps) {
 					w={24}
 					h={24}
 					rounded="full"
+					borderWidth={2}
+					borderColor="blue.normal"
 				/>
 			)}
 			<AvatarEditButton

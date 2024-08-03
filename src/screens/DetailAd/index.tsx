@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 import { Text, Heading, VStack, HStack, useTheme } from 'native-base';
 import { Container, ScrollView } from '@styles/global';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
-import { formatNumber } from '@utils/numberUtils';
 import { PaymentMethodItem } from '@components/PaymentMethodItem';
 import { Avatar } from '@components/Avatar';
 import { ImageContainer } from '@components/ImageContainer';
@@ -12,6 +11,7 @@ import { IProduct } from 'src/interfaces';
 import { Footer } from './components/Footer';
 import { ChipItem } from './styles';
 import { Header } from './components/Header';
+import { Price } from '@components/Price';
 
 type RouteParamsProps = {
 	id: string;
@@ -67,14 +67,7 @@ export function DetailAd() {
 								space="3"
 							>
 								<Heading>{adItem.name}</Heading>
-								<HStack flexDirection="row" alignItems="flex-end" space={1}>
-									<Text fontSize={16} pb={1} color={'blue.light'} bold>
-										R$
-									</Text>
-									<Text fontSize={24} color={'blue.light'} bold>
-										{formatNumber(adItem.price)}
-									</Text>
-								</HStack>
+								<Price value={adItem.price} color="blue.light" fontSize={24} />
 							</HStack>
 							<Text>{adItem.description}</Text>
 							<HStack space={2}>

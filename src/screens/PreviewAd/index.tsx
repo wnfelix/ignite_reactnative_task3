@@ -4,7 +4,6 @@ import { AntDesign } from '@expo/vector-icons';
 import { Container, ScrollView } from '@styles/global';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAuth } from '@hooks/useAuth';
-import { formatNumber } from '@utils/numberUtils';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
 import { PaymentMethodItem } from '@components/PaymentMethodItem';
 import { Avatar } from '@components/Avatar';
@@ -15,6 +14,7 @@ import { IPhotoFile, IProduct } from 'src/interfaces';
 import { ImageContainer } from '@components/ImageContainer';
 import { tryCatch } from '@utils/utils';
 import { Footer } from './styles';
+import { Price } from '@components/Price';
 
 type RouteParamsProps = Omit<IProduct, 'user'> & {
 	product_images: IPhotoFile[];
@@ -82,14 +82,7 @@ export function PreviewAd() {
 						space={3}
 					>
 						<Heading>{newAd.name}</Heading>
-						<HStack flexDirection={'row'} alignItems={'flex-end'} space={1}>
-							<Text fontSize={16} pb={1} color={'blue.light'} bold>
-								R$
-							</Text>
-							<Text fontSize={28} color={'blue.light'} bold>
-								{formatNumber(newAd.price)}
-							</Text>
-						</HStack>
+						<Price value={newAd.price} fontSize={28} color="blue.light" />
 					</HStack>
 					<Text>{newAd.description}</Text>
 					<HStack space={2}>
