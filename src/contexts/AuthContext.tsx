@@ -35,14 +35,11 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 	const [isLoadingUserStorageData, setIsLoadingUserStorage] = useState(true);
 
 	useEffect(() => {
-		loadUserData();
-	}, []);
-
-	useEffect(() => {
 		const subscriber = api.registerInterceptTokenManager(signOut);
+		loadUserData();
 
 		return () => subscriber();
-	}, [signOut]);
+	}, []);
 
 	async function userAndTokenUpdate(userData: IUser, token: string) {
 		api.defaults.headers.common['Authorization'] = `Bearer ${token}`;

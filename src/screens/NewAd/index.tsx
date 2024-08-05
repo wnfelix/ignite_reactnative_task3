@@ -78,7 +78,6 @@ type RouteParamsProps = {
 
 export function NewAd() {
 	const navigation = useNavigation<AppStackNavigatorRoutesProps>();
-	// const [isEditing, setIsEditing] = useState(true);
 	const [images, setImages] = useState<IPhotoFile[]>([emptyImage]);
 	const [id, setId] = useState<string>();
 	const [isLoading, setIsLoading] = useState(true);
@@ -308,7 +307,7 @@ export function NewAd() {
 										placeholder="Valor do produto"
 										fontSize="md"
 										maxLength={12}
-										keyboardType="numeric"
+										keyboardType="decimal-pad"
 										InputLeftElement={
 											<Text pl={4} fontSize="md">
 												R$

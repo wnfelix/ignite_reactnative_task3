@@ -53,3 +53,41 @@ export function handleError(
 		});
 	}
 }
+
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+import { IPhotoFile } from 'src/interfaces';
+
+export async function getDeviceImage(
+	sizeLimitFileInMb: number = 3
+): Promise<IPhotoFile | undefined> {
+	return new Promise(async (resolve, reject) => {
+		const selectedPhoto = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			quality: 1,
+			aspect: [4, 4],
+			allowsEditing: true,
+		});
+
+		if (!selectedPhoto.canceled) {
+			const asset = selectedPhoto.assets[0];
+			const photoInfo = await FileSystem.getInfoAsync(asset.uri);
+
+			if (photoInfo.size && photoInfo.size / 1024 / 1024 > sizeLimitFileInMb) {
+				reject(new AppError('Essa imagem é muito grande, o limite é de 3mb.'));
+				return;
+			}
+
+			const fileExtension = asset.uri.split('.').pop();
+			const photoFile: IPhotoFile = {
+				name: `${getNewId().toString()}.${fileExtension}`.toLowerCase(),
+				uri: asset.uri,
+				type: `${asset.type}/${fileExtension}`,
+			};
+
+			resolve(photoFile);
+		} else {
+			resolve(undefined);
+		}
+	});
+}

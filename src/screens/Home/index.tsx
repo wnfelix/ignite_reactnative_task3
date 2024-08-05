@@ -53,9 +53,6 @@ export function Home() {
 			finallyMethod: () => {
 				setIsLoading(false);
 			},
-			errorMessage:
-				'Não foi possível carregar os anúncios, tente novamente em instantes',
-			toast: toast,
 		});
 	}
 

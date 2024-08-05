@@ -29,11 +29,9 @@ api.registerInterceptTokenManager = signOut => {
 			return response;
 		},
 		async requestError => {
-			console.log('tem token', requestError);
-
 			if (requestError?.response?.status === 401) {
 				if (
-					requestError.response.data?.message === 'token.expired' ||
+					requestError.response.data?.message === 'Refresh token expirado.' ||
 					requestError.response.data?.message === 'token.invalid'
 				) {
 					const { refresh_token } = await storageAuthTokenGet();

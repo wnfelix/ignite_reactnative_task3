@@ -24,6 +24,7 @@ import {
 import { Header } from './components/Header';
 import { AvatarPhoto } from './components/AvatarPhoto';
 import { ScrollView } from '@styles/global';
+import { tryCatch } from '@utils/utils';
 
 interface IFormDataProps extends Pick<IUser, 'name' | 'email' | 'tel'> {
 	password: string;
@@ -53,7 +54,7 @@ export function SignUp() {
 	const { signIn } = useContext(AuthContext);
 	const navigator = useNavigation<AuthNatigatorRoutesProps>();
 	const toast = useToast();
-	const [avatar, setAvatar] = useState<IPhotoFile>({} as IPhotoFile);
+	const [avatar, setAvatar] = useState<IPhotoFile>();
 	const [isLoading, setIsLoading] = useState(false);
 
 	const {
@@ -69,30 +70,17 @@ export function SignUp() {
 	}
 
 	async function handleSignUp(data: IFormDataProps) {
-		try {
-			setIsLoading(true);
-			await userService.create(data, avatar);
-
-			toast.show({
-				title: 'Cadastrado com sucesso',
-				placement: 'top',
-				bgColor: 'green.500',
-			});
-			await signIn(data.email, data.password);
-		} catch (error) {
-			console.log(error);
-			setIsLoading(false);
-			const isAppError = error instanceof AppError;
-			const title = isAppError
-				? error.message
-				: 'Não foi possível criar a conta tente novamente mais tarde';
-
-			toast.show({
-				title: title,
-				placement: 'top',
-				bgColor: 'red.500',
-			});
-		}
+		setIsLoading(true);
+		tryCatch({
+			tryMethod: async () => {
+				await userService.create(data, avatar);
+				await signIn(data.email, data.password);
+			},
+			finallyMethod: () => setIsLoading(false),
+			successMessage: 'Cadastrado com sucesso',
+			errorMessage: 'Não foi possível criar a conta tente novamente mais tarde',
+			toast: toast,
+		});
 	}
 
 	/**

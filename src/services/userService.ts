@@ -11,7 +11,7 @@ interface ICreateUserData extends Pick<IUser, 'name' | 'email' | 'tel'> {
 	password: string;
 }
 
-async function create(user: ICreateUserData, avatar: IPhotoFile) {
+async function create(user: ICreateUserData, avatar?: IPhotoFile) {
 	const payloadForm = new FormData();
 
 	payloadForm.append('name', user.name);
